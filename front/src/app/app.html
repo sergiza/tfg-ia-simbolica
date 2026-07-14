@@ -1,0 +1,100 @@
+<div class="flex h-dvh flex-col bg-slate-100 text-slate-900">
+  <header class="border-b border-slate-300 bg-white px-6 py-4">
+    <h1 class="text-xl font-bold">IA Simbólica</h1>
+  </header>
+
+  <main class="flex min-h-0 flex-1">
+    <section class="flex min-w-0 basis-2/3 flex-col">
+      <nav class="flex border-b border-slate-300 bg-white">
+        <button
+          type="button"
+          (click)="pestana.set('hecho')"
+          class="flex-1 border-b-2 px-4 py-3 text-sm font-semibold tracking-wide uppercase"
+          [class]="
+            pestana() === 'hecho'
+              ? 'border-indigo-600 text-indigo-700'
+              : 'border-transparent text-slate-500 hover:text-slate-700'
+          "
+        >
+          Añadir hecho
+        </button>
+        <button
+          type="button"
+          (click)="pestana.set('regla')"
+          class="flex-1 border-b-2 px-4 py-3 text-sm font-semibold tracking-wide uppercase"
+          [class]="
+            pestana() === 'regla'
+              ? 'border-indigo-600 text-indigo-700'
+              : 'border-transparent text-slate-500 hover:text-slate-700'
+          "
+        >
+          Añadir regla
+        </button>
+      </nav>
+
+      <section class="min-h-0 flex-1 overflow-y-auto p-6">
+        @if (pestana() === 'hecho') {
+          <p class="text-slate-500 italic">Aquí irá el formulario para añadir hechos.</p>
+        } @else {
+          <p class="text-slate-500 italic">Aquí irá el formulario para añadir reglas.</p>
+        }
+      </section>
+
+      <section class="bg-slate-800">
+        <button
+          type="button"
+          (click)="consultaAbierta.set(!consultaAbierta())"
+          [disabled]="!consultaDisponible()"
+          class="flex w-full items-center gap-3 px-6 py-5 text-left text-sm font-semibold tracking-wide uppercase"
+          [class]="
+            consultaDisponible()
+              ? 'text-white hover:bg-slate-700'
+              : 'cursor-not-allowed text-slate-400'
+          "
+        >
+          @if (!consultaDisponible()) {
+            <svg
+              aria-hidden="true"
+              class="size-4 shrink-0"
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 20 20"
+              fill="currentColor"
+            >
+              <path
+                fill-rule="evenodd"
+                d="M10 1a4.5 4.5 0 0 0-4.5 4.5V9H5a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6a2 2 0 0 0-2-2h-.5V5.5A4.5 4.5 0 0 0 10 1Zm3 8V5.5a3 3 0 1 0-6 0V9h6Z"
+                clip-rule="evenodd"
+              />
+            </svg>
+          } @else {
+            <span aria-hidden="true">{{ consultaAbierta() ? '▾' : '▸' }}</span>
+          }
+          <span>Consultar</span>
+          @if (!consultaDisponible()) {
+            <span class="font-normal normal-case italic">
+              — añade hechos para poder consultar
+            </span>
+          }
+        </button>
+
+        @if (consultaAbierta() && consultaDisponible()) {
+          <div class="border-t border-slate-700 bg-white p-6">
+            <p class="text-slate-500 italic">Aquí irá la interfaz de consultas.</p>
+          </div>
+        }
+      </section>
+    </section>
+
+    <aside class="min-w-0 basis-1/3 overflow-y-auto border-l border-slate-300 bg-white p-6">
+      <h2 class="mb-4 text-sm font-semibold tracking-wide text-slate-700 uppercase">
+        Base de conocimiento
+      </h2>
+
+      <h3 class="mb-2 text-xs font-semibold tracking-wide text-slate-500 uppercase">Hechos</h3>
+      <p class="mb-6 text-sm text-slate-400 italic">Sin hechos.</p>
+
+      <h3 class="mb-2 text-xs font-semibold tracking-wide text-slate-500 uppercase">Reglas</h3>
+      <p class="text-sm text-slate-400 italic">Sin reglas.</p>
+    </aside>
+  </main>
+</div>
