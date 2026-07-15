@@ -1,0 +1,87 @@
+<form (submit)="enviar($event)" class="space-y-6">
+  <div>
+    <p class="mb-2 text-xs font-semibold tracking-wide text-slate-500 uppercase">Definir</p>
+    <div class="flex flex-wrap items-center gap-2">
+      <app-selector-predicado
+        [valor]="predicado()"
+        etiqueta="Predicado que define la regla"
+        (cambio)="elegirPredicadoCabeza($event)"
+        (borrador)="borradorCabeza.set($event)"
+      />
+      @if (predicado() !== '' || borradorCabeza() !== null) {
+        <span class="font-mono text-sm text-slate-500">→ {{ cabezaTexto() }}</span>
+      }
+    </div>
+  </div>
+
+  @if (predicado() !== '') {
+    <div>
+      <p class="mb-2 text-xs font-semibold tracking-wide text-slate-500 uppercase">
+        Se cumple cuando
+      </p>
+      <div class="space-y-3">
+        @for (lit of cuerpo(); track $index) {
+          @let literal = $index;
+          <div class="flex flex-wrap items-center gap-2">
+            <app-selector-predicado
+              [valor]="lit.predicado"
+              [etiqueta]="'Predicado de la condición ' + (literal + 1)"
+              (cambio)="elegirPredicadoLiteral(literal, $event)"
+            />
+            @if (lit.predicado !== '') {
+              <span class="font-mono text-lg text-slate-400">(</span>
+              @for (a of lit.argumentos; track $index) {
+                @if ($index > 0) {
+                  <span class="font-mono text-lg text-slate-400">,</span>
+                }
+                <app-selector-valor
+                  [valor]="a"
+                  [variables]="variablesEnJuego()"
+                  [nuevaVariable]="nuevaVariable()"
+                  [etiqueta]="'Argumento ' + ($index + 1) + ' de la condición ' + (literal + 1)"
+                  (cambio)="ponerArgumento(literal, $index, $event)"
+                />
+              }
+              <span class="font-mono text-lg text-slate-400">)</span>
+            }
+            <button
+              type="button"
+              (click)="quitarLiteral(literal)"
+              [disabled]="cuerpo().length === 1"
+              aria-label="Quitar condición"
+              class="rounded px-2 py-1 text-lg leading-none text-slate-400 hover:text-red-600 disabled:cursor-not-allowed disabled:opacity-30"
+            >
+              ×
+            </button>
+          </div>
+        }
+        <button
+          type="button"
+          (click)="agregarLiteral()"
+          class="rounded border border-slate-300 bg-white px-3 py-1 text-sm text-slate-600 hover:bg-slate-50"
+        >
+          + condición
+        </button>
+      </div>
+    </div>
+
+    @if (camposCompletos() && variablesSinUsar().length > 0) {
+      <p class="text-sm text-amber-700">
+        Cada variable de la definición debe aparecer en alguna condición. Falta:
+        {{ variablesSinUsar().join(', ') }}
+      </p>
+    }
+
+    @if (error()) {
+      <p class="text-sm text-red-600">{{ error() }}</p>
+    }
+
+    <button
+      type="submit"
+      [disabled]="!valido()"
+      class="rounded bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-500 disabled:cursor-not-allowed disabled:bg-slate-300"
+    >
+      Añadir regla
+    </button>
+  }
+</form>

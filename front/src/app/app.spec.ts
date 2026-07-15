@@ -1,26 +1,59 @@
+import { provideHttpClient } from '@angular/common/http';
+import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { App } from './app';
+import { Estado } from './modelos';
 
 describe('App', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [App],
+      providers: [provideHttpClient(), provideHttpClientTesting()],
     }).compileComponents();
   });
 
-  it('debería mostrar el título en la navbar', () => {
+  async function crearApp(estado: Estado = { hechos: [], reglas: [] }) {
     const fixture = TestBed.createComponent(App);
     fixture.detectChanges();
+    const http = TestBed.inject(HttpTestingController);
+    http.expectOne('http://localhost:5000/estado').flush(estado);
+    await fixture.whenStable();
+    fixture.detectChanges();
+    return fixture;
+  }
+
+  it('debería mostrar el título en la navbar', async () => {
+    const fixture = await crearApp();
     const compiled = fixture.nativeElement as HTMLElement;
     expect(compiled.querySelector('h1')?.textContent).toContain('IA Simbólica');
   });
 
-  it('debería bloquear la consulta mientras no haya hechos', () => {
-    const fixture = TestBed.createComponent(App);
-    fixture.detectChanges();
+  it('debería bloquear la consulta mientras no haya hechos', async () => {
+    const fixture = await crearApp();
     const compiled = fixture.nativeElement as HTMLElement;
     const botones = Array.from(compiled.querySelectorAll('button'));
     const botonConsultar = botones.find((b) => b.textContent?.includes('Consultar'));
     expect(botonConsultar?.disabled).toBe(true);
+  });
+
+  it('debería desbloquear la consulta cuando hay hechos', async () => {
+    const fixture = await crearApp({
+      hechos: [{ predicado: 'padre', terminos: ['juan', 'maria'] }],
+      reglas: [],
+    });
+    const compiled = fixture.nativeElement as HTMLElement;
+    const botones = Array.from(compiled.querySelectorAll('button'));
+    const botonConsultar = botones.find((b) => b.textContent?.includes('Consultar'));
+    expect(botonConsultar?.disabled).toBe(false);
+  });
+
+  it('debería pintar los hechos en la base de conocimiento', async () => {
+    const fixture = await crearApp({
+      hechos: [{ predicado: 'padre', terminos: ['juan', 'maria'] }],
+      reglas: [],
+    });
+    const compiled = fixture.nativeElement as HTMLElement;
+    expect(compiled.textContent).toContain('padre');
+    expect(compiled.textContent).toContain('(juan, maria)');
   });
 });

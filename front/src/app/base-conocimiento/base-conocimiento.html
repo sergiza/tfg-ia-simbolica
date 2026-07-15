@@ -1,0 +1,53 @@
+<h2 class="mb-4 text-sm font-semibold tracking-wide text-slate-700 uppercase">
+  Base de conocimiento
+</h2>
+
+@if (kb.errorConexion()) {
+  <div class="mb-4 rounded border border-red-200 bg-red-50 p-3 text-sm text-red-700">
+    <p class="mb-2">No se ha podido conectar con el servidor.</p>
+    <button
+      type="button"
+      (click)="kb.cargarEstado()"
+      class="rounded border border-red-300 bg-white px-3 py-1 font-semibold hover:bg-red-100"
+    >
+      Reintentar
+    </button>
+  </div>
+}
+
+<h3 class="mb-2 text-xs font-semibold tracking-wide text-slate-500 uppercase">Hechos</h3>
+@if (kb.hechos().length === 0) {
+  <p class="mb-6 text-sm text-slate-400 italic">Sin hechos.</p>
+} @else {
+  <ul class="mb-6 space-y-1">
+    @for (h of kb.hechos(); track $index) {
+      <li class="group flex items-center justify-between gap-2 rounded px-2 py-1 hover:bg-slate-50">
+        <code class="font-mono text-sm">
+          <span class="font-semibold">{{ h.predicado }}</span
+          >({{ h.terminos.join(', ') }})
+        </code>
+        <button
+          type="button"
+          (click)="kb.removeHecho(h)"
+          aria-label="Borrar hecho"
+          class="invisible rounded px-1 text-lg leading-none text-slate-400 group-hover:visible hover:text-red-600"
+        >
+          ×
+        </button>
+      </li>
+    }
+  </ul>
+}
+
+<h3 class="mb-2 text-xs font-semibold tracking-wide text-slate-500 uppercase">Reglas</h3>
+@if (kb.reglas().length === 0) {
+  <p class="text-sm text-slate-400 italic">Sin reglas.</p>
+} @else {
+  <ul class="space-y-1">
+    @for (r of kb.reglas(); track $index) {
+      <li class="rounded px-2 py-1 hover:bg-slate-50">
+        <code class="font-mono text-sm">{{ formatearRegla(r) }}</code>
+      </li>
+    }
+  </ul>
+}

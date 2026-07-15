@@ -32,7 +32,7 @@ def _formato_arg(arg: str) -> str:
 def add_regla(cabeza: dict, cuerpo: list[dict]) -> dict:
     head_str = f"{cabeza['predicado']}({', '.join(cabeza['variables'])})"
     body_parts = [
-        f"{lit['predicado']}({', '.join(lit['argumentos'])})"
+        f"{lit['predicado']}({', '.join(_formato_arg(a) for a in lit['argumentos'])})"
         for lit in cuerpo
     ]
     pyDatalog.load(f"{head_str} <= {' & '.join(body_parts)}")

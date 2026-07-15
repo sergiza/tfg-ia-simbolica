@@ -1,0 +1,136 @@
+<section class="bg-slate-800">
+  <button
+    type="button"
+    (click)="alternar()"
+    [disabled]="!disponible()"
+    class="flex w-full items-center gap-3 px-6 py-8 text-left text-base font-semibold tracking-wide uppercase transition-colors"
+    [class]="disponible() ? 'text-white hover:bg-slate-700' : 'cursor-not-allowed text-slate-400'"
+  >
+    <svg
+      aria-hidden="true"
+      class="size-5 shrink-0"
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 20 20"
+      fill="currentColor"
+    >
+      <path
+        fill-rule="evenodd"
+        d="M9 3.5a5.5 5.5 0 1 0 0 11 5.5 5.5 0 0 0 0-11ZM2 9a7 7 0 1 1 12.452 4.391l3.328 3.329a.75.75 0 1 1-1.06 1.06l-3.329-3.328A7 7 0 0 1 2 9Z"
+        clip-rule="evenodd"
+      />
+    </svg>
+    <span>Consultar</span>
+    @if (!disponible()) {
+      <svg
+        aria-hidden="true"
+        class="size-4 shrink-0"
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 20 20"
+        fill="currentColor"
+      >
+        <path
+          fill-rule="evenodd"
+          d="M10 1a4.5 4.5 0 0 0-4.5 4.5V9H5a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6a2 2 0 0 0-2-2h-.5V5.5A4.5 4.5 0 0 0 10 1Zm3 8V5.5a3 3 0 1 0-6 0V9h6Z"
+          clip-rule="evenodd"
+        />
+      </svg>
+      <span class="font-normal normal-case italic">Añade hechos para poder consultar.</span>
+    } @else {
+      <span aria-hidden="true" class="ml-auto">{{ abierta() ? '▾' : '▸' }}</span>
+    }
+  </button>
+
+  @if (abierta() && disponible()) {
+    <div class="grid gap-6 border-t border-slate-700 bg-white p-6 md:grid-cols-2">
+      <div class="space-y-4">
+        <div>
+          <label
+            for="consulta-predicado"
+            class="mb-1 block text-xs font-semibold tracking-wide text-slate-500 uppercase"
+          >
+            Predicado
+          </label>
+          <select
+            id="consulta-predicado"
+            [value]="predicado()"
+            (change)="elegirPredicado($event)"
+            [class]="'w-full ' + estiloPredicado"
+          >
+            <option value="" disabled>Elige un predicado</option>
+            @for (p of kb.predicados(); track p) {
+              <option [value]="p">{{ p }}</option>
+            }
+          </select>
+        </div>
+
+        @if (argumentos().length > 0) {
+          <fieldset>
+            <legend class="mb-1 text-xs font-semibold tracking-wide text-slate-500 uppercase">
+              Argumentos
+            </legend>
+            <div class="space-y-2">
+              @for (a of argumentos(); track $index) {
+                <select
+                  [value]="a"
+                  (change)="elegirArgumento($index, $event)"
+                  [attr.aria-label]="'Argumento ' + ($index + 1)"
+                  [class]="'w-full ' + estiloArgumento(a)"
+                >
+                  <option value="">Libre (cualquier valor)</option>
+                  @for (t of kb.terminos(); track t) {
+                    <option [value]="t">{{ t }}</option>
+                  }
+                </select>
+              }
+            </div>
+          </fieldset>
+        }
+
+        @if (error()) {
+          <p class="text-sm text-red-600">{{ error() }}</p>
+        }
+
+        <button
+          type="button"
+          (click)="consultar()"
+          [disabled]="predicado() === ''"
+          class="rounded bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-500 disabled:cursor-not-allowed disabled:bg-slate-300"
+        >
+          Consultar
+        </button>
+      </div>
+
+      <div>
+        <h3 class="mb-2 text-xs font-semibold tracking-wide text-slate-500 uppercase">
+          Resultados
+        </h3>
+        @if (resultados() === null) {
+          <p class="text-sm text-slate-400 italic">Lanza una consulta para ver sus resultados.</p>
+        } @else if (variablesConsultadas().length === 0) {
+          <p class="font-mono text-sm">{{ resultados()!.length > 0 ? 'Sí' : 'No' }}</p>
+        } @else if (resultados()!.length === 0) {
+          <p class="text-sm text-slate-500 italic">Sin resultados.</p>
+        } @else {
+          <table class="text-sm">
+            <thead>
+              <tr>
+                @for (v of variablesConsultadas(); track v) {
+                  <th class="border-b border-slate-300 px-3 py-1 text-left font-mono">{{ v }}</th>
+                }
+              </tr>
+            </thead>
+            <tbody>
+              @for (fila of resultados()!; track $index) {
+                <tr>
+                  @for (valor of fila; track $index) {
+                    <td class="px-3 py-1 font-mono">{{ valor }}</td>
+                  }
+                </tr>
+              }
+            </tbody>
+          </table>
+        }
+      </div>
+    </div>
+  }
+</section>

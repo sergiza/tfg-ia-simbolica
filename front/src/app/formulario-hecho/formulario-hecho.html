@@ -1,0 +1,34 @@
+<form (submit)="enviar($event)" class="space-y-5">
+  <div>
+    <p class="mb-2 text-xs font-semibold tracking-wide text-slate-500 uppercase">Hecho</p>
+    <div class="flex flex-wrap items-center gap-2">
+      <app-selector-predicado [valor]="predicado()" (cambio)="elegirPredicado($event)" />
+      @if (predicado() !== '') {
+        <span class="font-mono text-lg text-slate-400">(</span>
+        @for (t of terminos(); track $index) {
+          @if ($index > 0) {
+            <span class="font-mono text-lg text-slate-400">,</span>
+          }
+          <app-selector-valor
+            [valor]="t"
+            [etiqueta]="'Término ' + ($index + 1)"
+            (cambio)="ponerTermino($index, $event)"
+          />
+        }
+        <span class="font-mono text-lg text-slate-400">)</span>
+      }
+    </div>
+  </div>
+
+  @if (error()) {
+    <p class="text-sm text-red-600">{{ error() }}</p>
+  }
+
+  <button
+    type="submit"
+    [disabled]="!valido()"
+    class="rounded bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-500 disabled:cursor-not-allowed disabled:bg-slate-300"
+  >
+    Añadir hecho
+  </button>
+</form>
