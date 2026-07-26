@@ -50,5 +50,11 @@ def post_consultar():
     return jsonify(resultados)
 
 
+@app.route('/reiniciar', methods=['POST'])
+def post_reiniciar():
+    kb.reiniciar()
+    return '', 204
+
+
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True, threaded=False)

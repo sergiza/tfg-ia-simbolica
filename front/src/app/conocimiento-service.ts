@@ -95,6 +95,14 @@ export class ConocimientoService {
     this.reglas.update((reglas) => [...reglas, creada]);
   }
 
+  async reiniciar(): Promise<void> {
+    await firstValueFrom(this.http.post(`${API}/reiniciar`, {}));
+    this.hechos.set([]);
+    this.reglas.set([]);
+    this.declarados.set([]);
+    this.constantesExtra.set([]);
+  }
+
   async consultar(predicado: string, argumentos: string[]): Promise<string[][]> {
     return firstValueFrom(
       this.http.post<string[][]>(`${API}/consultar`, { predicado, argumentos }),

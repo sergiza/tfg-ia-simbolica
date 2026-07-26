@@ -51,3 +51,9 @@ def consultar(predicado: str, argumentos: list[str]) -> list:
 
 def get_estado() -> dict:
     return {"hechos": list(_hechos), "reglas": list(_reglas)}
+
+
+def reiniciar() -> None:
+    pyDatalog.clear()
+    _hechos.clear()
+    _reglas.clear()
