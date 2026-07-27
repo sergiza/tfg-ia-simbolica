@@ -3,7 +3,7 @@
 Se propone el desarrollo de una aplicación web intuitiva que permita a usuarios sin experiencia
 previa familiarizarse con la inteligencia artificial simbólica. La herramienta permite definir he-
 chos, reglas y consultas sobre una base de conocimiento, ocultando la complejidad sintáctica del
-motor lógico subyacente y mostrando en todo momento el estado de dicha base de conocimiento.\\
+motor lógico subyacente y mostrando en todo momento el estado de dicha base de conocimiento.\
 El objetivo final es reducir la barrera de entrada, facilitando la comprensión de los conceptos de
 la inteligencia artificial simbólica mediante una experiencia interactiva y permitiendo centrarse
 en el aprendizaje.
