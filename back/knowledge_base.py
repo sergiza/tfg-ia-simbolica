@@ -30,12 +30,12 @@ def _formato_arg(arg: str) -> str:
 
 
 def add_regla(cabeza: dict, cuerpo: list[dict]) -> dict:
-    head_str = f"{cabeza['predicado']}({', '.join(cabeza['variables'])})"
-    body_parts = [
-        f"{lit['predicado']}({', '.join(_formato_arg(a) for a in lit['argumentos'])})"
-        for lit in cuerpo
+    cabeza_str = f"{cabeza['predicado']}({', '.join(cabeza['variables'])})"
+    cuerpo_partes = [
+        f"{literal['predicado']}({', '.join(_formato_arg(arg) for arg in literal['argumentos'])})"
+        for literal in cuerpo
     ]
-    pyDatalog.load(f"{head_str} <= {' & '.join(body_parts)}")
+    pyDatalog.load(f"{cabeza_str} <= {' & '.join(cuerpo_partes)}")
     regla = {"cabeza": cabeza, "cuerpo": cuerpo}
     _reglas.append(regla)
     return regla
