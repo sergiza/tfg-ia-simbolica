@@ -1,9 +1,16 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable, computed, inject, signal } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
 import { Comparacion, Estado, Hecho, PredicadoDeclarado, Regla, esNumero } from './modelos';
 
 const API = 'http://localhost:5000';
+
+export function mensajeError(error: unknown, respaldo: string): string {
+  if (error instanceof HttpErrorResponse && typeof error.error?.error === 'string') {
+    return error.error.error;
+  }
+  return respaldo;
+}
 
 @Injectable({ providedIn: 'root' })
 export class ConocimientoService {

@@ -1,6 +1,6 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { Combobox, GrupoCombo } from '../../comun/combobox/combobox';
-import { ConocimientoService } from '../conocimiento-service';
+import { ConocimientoService, mensajeError } from '../conocimiento-service';
 import {
   BOTON_EXTENDER,
   OPCION_CONSTANTE,
@@ -192,8 +192,10 @@ export class PanelConsulta {
       const filas = await this.kb.consultar(this.predicado(), argumentos, condiciones);
       this.variablesConsultadas.set(variables);
       this.resultados.set(filas);
-    } catch {
-      this.error.set('No se pudo consultar. Comprueba que el servidor está en marcha.');
+    } catch (e) {
+      this.error.set(
+        mensajeError(e, 'No se pudo consultar. Comprueba que el servidor está en marcha.'),
+      );
     }
   }
 }

@@ -4,6 +4,10 @@ _hechos = []
 _reglas = []
 
 
+class ErrorConsulta(Exception):
+    pass
+
+
 def _valor(arg: str) -> str | int:
     return int(arg) if arg.isdigit() else arg
 
@@ -66,6 +70,12 @@ def consultar(
         resultado = pyDatalog.ask(" & ".join(partes))
     except AttributeError:
         return []  # predicado sin hechos ni reglas no debe ser error
+    except TypeError:
+        raise ErrorConsulta(
+            "Los comparadores (<, >, =…) solo funcionan con números, "
+            "y aquí se está comparando un texto. Comprueba a qué argumento "
+            "le has puesto el filtro."
+        )
     if resultado is None:
         return []
     return [list(fila) for fila in resultado.answers]
