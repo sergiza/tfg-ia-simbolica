@@ -45,13 +45,6 @@ export class ConocimientoService {
     return [...new Set(todas)].filter((t) => !esNumero(t)).sort();
   });
 
-  readonly numeros = computed(() => {
-    const todos = this.hechos()
-      .flatMap((h) => h.terminos)
-      .filter(esNumero);
-    return [...new Set(todos)].sort((a, b) => Number(a) - Number(b));
-  });
-
   constructor() {
     this.cargarEstado().catch(() => this.errorConexion.set(true));
   }

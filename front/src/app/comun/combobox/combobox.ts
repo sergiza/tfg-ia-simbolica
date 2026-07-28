@@ -1,3 +1,4 @@
+import { CdkConnectedOverlay, CdkOverlayOrigin } from '@angular/cdk/overlay';
 import {
   Component,
   ElementRef,
@@ -40,6 +41,7 @@ let contador = 0;
 @Component({
   selector: 'app-combobox',
   templateUrl: './combobox.html',
+  imports: [CdkOverlayOrigin, CdkConnectedOverlay],
 })
 export class Combobox {
   readonly valor = input('');
@@ -48,7 +50,7 @@ export class Combobox {
   readonly marcador = input('elige…');
   readonly estilo = input('');
   readonly ancho = input('w-40');
-  readonly etiquetaCrear = input<((texto: string) => string) | null>(null);
+  readonly etiquetaCrear = input<((texto: string) => string | null) | null>(null);
   readonly cambio = output<string>();
   readonly crear = output<string>();
 
@@ -61,8 +63,10 @@ export class Combobox {
   protected readonly abierto = signal(false);
   protected readonly consulta = signal('');
   protected readonly indiceActivo = signal(0);
+  protected readonly anchoOrigen = signal(0);
 
   private readonly entrada = viewChild.required<ElementRef<HTMLInputElement>>('entrada');
+  private readonly origen = viewChild.required('origen', { read: ElementRef });
   private readonly filas = viewChildren<ElementRef<HTMLElement>>('opcionFila');
 
   protected readonly vista = computed(() => {
@@ -84,7 +88,9 @@ export class Combobox {
 
     const texto = consulta.trim();
     const existe = this.grupos().some((g) => g.opciones.some((o) => o.valor === texto));
-    const crear = this.etiquetaCrear() !== null && !existe ? { indice: todas.length } : null;
+    const etiquetaCrear = this.etiquetaCrear();
+    const textoCrear = etiquetaCrear === null || existe ? null : etiquetaCrear(texto);
+    const crear = textoCrear === null ? null : { indice: todas.length, texto: textoCrear };
 
     return { grupos, todas, crear, total: todas.length + (crear === null ? 0 : 1) };
   });
@@ -94,11 +100,6 @@ export class Combobox {
       .flatMap((g) => g.opciones)
       .find((o) => o.valor === this.valor());
     return opcion?.etiqueta ?? this.valor();
-  });
-
-  protected readonly textoFilaCrear = computed(() => {
-    const etiqueta = this.etiquetaCrear();
-    return etiqueta === null ? '' : etiqueta(this.consulta().trim());
   });
 
   constructor() {
@@ -115,6 +116,7 @@ export class Combobox {
       return;
     }
     this.consulta.set('');
+    this.anchoOrigen.set(this.origen().nativeElement.offsetWidth);
     this.abierto.set(true);
     this.indiceActivo.set(this.indiceDe(this.valor()));
   }

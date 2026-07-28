@@ -65,14 +65,6 @@ export class SelectorValor {
       });
     }
 
-    const numeros = this.kb.numeros();
-    if (numeros.length > 0) {
-      grupos.push({
-        titulo: 'Números',
-        opciones: numeros.map((n) => ({ valor: n, etiqueta: n, clase: OPCION_CONSTANTE })),
-      });
-    }
-
     return grupos.length === 1 ? [{ ...grupos[0], titulo: null }] : grupos;
   });
 

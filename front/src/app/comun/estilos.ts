@@ -11,7 +11,7 @@ export const SELECT_NEUTRO = `${SELECT_BASE} border-slate-300 bg-white text-slat
 export const SELECT_OPERACION = `${SELECT_BASE} border-violet-300 bg-violet-50 text-violet-900 focus:border-violet-600`;
 
 export const COMBO_LISTA =
-  'absolute z-20 mt-1 max-h-60 w-full min-w-max overflow-y-auto rounded border border-slate-300 bg-white py-1 shadow-lg';
+  'mt-1 max-h-60 min-w-max overflow-y-auto rounded border border-slate-300 bg-white py-1 shadow-lg';
 
 export const COMBO_GRUPO = 'px-2 py-1 text-xs font-semibold tracking-wide text-slate-400 uppercase';
 

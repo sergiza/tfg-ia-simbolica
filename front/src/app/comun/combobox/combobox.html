@@ -1,4 +1,4 @@
-<div class="relative inline-block" [class]="ancho()">
+<div class="relative inline-block" [class]="ancho()" cdkOverlayOrigin #origen="cdkOverlayOrigin">
   <input
     #entrada
     type="text"
@@ -13,6 +13,7 @@
     [attr.aria-controls]="id + '-lista'"
     [attr.aria-activedescendant]="abierto() ? id + '-op-' + indiceActivo() : null"
     (focus)="abrir()"
+    (click)="abrir()"
     (input)="escribir($event)"
     (keydown)="teclear($event)"
     (blur)="cerrar()"
@@ -40,71 +41,77 @@
       />
     </svg>
   </button>
+</div>
 
-  @if (abierto()) {
-    <ul
-      role="listbox"
-      [id]="id + '-lista'"
-      [attr.aria-label]="etiqueta()"
-      (mousedown)="$event.preventDefault()"
-      [class]="estiloLista"
-    >
-      @for (grupo of vista().grupos; track grupo.titulo) {
-        @if (grupo.titulo !== null) {
-          <li role="presentation" [class]="estiloGrupo">{{ grupo.titulo }}</li>
-        }
-        @for (fila of grupo.filas; track fila.opcion.valor) {
-          <li
-            #opcionFila
-            role="option"
-            [id]="id + '-op-' + fila.indice"
-            [attr.aria-selected]="fila.opcion.valor === valor()"
-            (click)="elegir(fila.indice)"
-            (mouseenter)="indiceActivo.set(fila.indice)"
-            [class]="
-              estiloFila +
-              ' ' +
-              (fila.opcion.clase ?? '') +
-              (indiceActivo() === fila.indice ? ' bg-slate-100' : '')
-            "
-          >
-            <span>
-              @for (s of fila.segmentos; track $index) {
-                @if (s.resaltado) {
-                  <span class="font-bold underline decoration-2">{{ s.texto }}</span>
-                } @else {
-                  <span>{{ s.texto }}</span>
-                }
-              }
-            </span>
-            @if (fila.opcion.nota) {
-              <span class="text-xs font-normal whitespace-nowrap text-slate-400 italic">{{
-                fila.opcion.nota
-              }}</span>
-            }
-          </li>
-        }
+<ng-template
+  cdkConnectedOverlay
+  [cdkConnectedOverlayOrigin]="origen"
+  [cdkConnectedOverlayOpen]="abierto()"
+  [cdkConnectedOverlayMinWidth]="anchoOrigen()"
+  (overlayOutsideClick)="cerrar()"
+>
+  <ul
+    role="listbox"
+    [id]="id + '-lista'"
+    [attr.aria-label]="etiqueta()"
+    (mousedown)="$event.preventDefault()"
+    [class]="estiloLista"
+  >
+    @for (grupo of vista().grupos; track grupo.titulo) {
+      @if (grupo.titulo !== null) {
+        <li role="presentation" [class]="estiloGrupo">{{ grupo.titulo }}</li>
       }
-
-      @if (vista().crear; as filaCrear) {
+      @for (fila of grupo.filas; track fila.opcion.valor) {
         <li
           #opcionFila
           role="option"
-          [id]="id + '-op-' + filaCrear.indice"
-          aria-selected="false"
-          (click)="elegir(filaCrear.indice)"
-          (mouseenter)="indiceActivo.set(filaCrear.indice)"
+          [id]="id + '-op-' + fila.indice"
+          [attr.aria-selected]="fila.opcion.valor === valor()"
+          (click)="elegir(fila.indice)"
+          (mouseenter)="indiceActivo.set(fila.indice)"
           [class]="
             estiloFila +
             ' ' +
-            estiloCrear +
-            ' border-t border-slate-200' +
-            (indiceActivo() === filaCrear.indice ? ' bg-slate-100' : '')
+            (fila.opcion.clase ?? '') +
+            (indiceActivo() === fila.indice ? ' bg-slate-100' : '')
           "
         >
-          {{ textoFilaCrear() }}
+          <span>
+            @for (s of fila.segmentos; track $index) {
+              @if (s.resaltado) {
+                <span class="font-bold underline decoration-2">{{ s.texto }}</span>
+              } @else {
+                <span>{{ s.texto }}</span>
+              }
+            }
+          </span>
+          @if (fila.opcion.nota) {
+            <span class="text-xs font-normal whitespace-nowrap text-slate-400 italic">{{
+              fila.opcion.nota
+            }}</span>
+          }
         </li>
       }
-    </ul>
-  }
-</div>
+    }
+
+    @if (vista().crear; as filaCrear) {
+      <li
+        #opcionFila
+        role="option"
+        [id]="id + '-op-' + filaCrear.indice"
+        aria-selected="false"
+        (click)="elegir(filaCrear.indice)"
+        (mouseenter)="indiceActivo.set(filaCrear.indice)"
+        [class]="
+          estiloFila +
+          ' ' +
+          estiloCrear +
+          ' border-t border-slate-200' +
+          (indiceActivo() === filaCrear.indice ? ' bg-slate-100' : '')
+        "
+      >
+        {{ filaCrear.texto }}
+      </li>
+    }
+  </ul>
+</ng-template>

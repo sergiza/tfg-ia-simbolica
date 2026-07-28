@@ -44,7 +44,7 @@
         </div>
         @if (abierta() === clave(entrada)) {
           <div
-            class="border-t border-slate-200 px-4 py-3 text-slate-700"
+            class="prose prose-sm prose-slate max-w-none border-t border-slate-200 px-4 py-3 prose-code:before:content-none prose-code:after:content-none"
             [innerHTML]="descripcion()"
           ></div>
         }
@@ -105,7 +105,7 @@
           </div>
           @if (abierta() === clave(entrada)) {
             <div
-              class="border-t border-slate-200 px-4 py-3 text-slate-700"
+              class="prose prose-sm prose-slate max-w-none border-t border-slate-200 px-4 py-3 prose-code:before:content-none prose-code:after:content-none"
               [innerHTML]="descripcion()"
             ></div>
           }

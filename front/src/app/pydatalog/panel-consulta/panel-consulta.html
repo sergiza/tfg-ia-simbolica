@@ -84,7 +84,9 @@
                     [etiqueta]="'Argumento ' + (i + 1)"
                     marcador="valor…"
                     ancho="w-32"
+                    [etiquetaCrear]="etiquetaCrearArgumento"
                     (cambio)="elegirArgumento(i, $event)"
+                    (crear)="elegirArgumento(i, $event)"
                   />
                   @if (a === '') {
                     @if (filtro(i); as f) {

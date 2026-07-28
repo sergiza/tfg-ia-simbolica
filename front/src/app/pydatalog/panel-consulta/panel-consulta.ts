@@ -16,6 +16,7 @@ import {
   LETRAS_VARIABLES,
   formatearCondicion,
   formatearLlamada,
+  esNumero,
 } from '../modelos';
 import { SelectorValor } from '../selector-valor/selector-valor';
 
@@ -89,16 +90,11 @@ export class PanelConsulta {
       });
     }
 
-    const numeros = this.kb.numeros();
-    if (numeros.length > 0) {
-      grupos.push({
-        titulo: 'Números',
-        opciones: numeros.map((n) => ({ valor: n, etiqueta: n, clase: OPCION_CONSTANTE })),
-      });
-    }
-
     return grupos;
   });
+
+  protected readonly etiquetaCrearArgumento = (texto: string): string | null =>
+    esNumero(texto) ? `+ usar el número ${texto}` : null;
 
   private readonly consultaResuelta = computed(() => {
     let libre = 0;

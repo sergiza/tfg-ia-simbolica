@@ -1,7 +1,7 @@
 import { DatePipe } from '@angular/common';
 import { Component, computed, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
-import { renderizar } from '../comun/markdown';
+import { marked } from 'marked';
 import { ConocimientoService } from '../pydatalog/conocimiento-service';
 import { BibliotecaService, Entrada } from './biblioteca-service';
 
@@ -25,7 +25,8 @@ export class Biblioteca {
       return '';
     }
     const entradas = [...this.biblioteca.ejemplos(), ...this.biblioteca.guardados()];
-    return renderizar(entradas.find((e) => this.clave(e) === clave)?.descripcion ?? '');
+    const markdown = entradas.find((e) => this.clave(e) === clave)?.descripcion ?? '';
+    return marked.parse(markdown, { async: false });
   });
 
   constructor() {
