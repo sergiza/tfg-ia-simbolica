@@ -53,6 +53,27 @@ export class PanelConsulta {
     },
   ]);
 
+  private readonly consultaResuelta = computed(() => {
+    let libre = 0;
+    const variables: string[] = [];
+    const argumentos = this.argumentos().map((a) => {
+      if (a !== '') {
+        return a;
+      }
+      const letra = LETRAS_VARIABLES[libre++];
+      variables.push(letra);
+      return letra;
+    });
+    return { argumentos, variables };
+  });
+
+  protected readonly consultaTexto = computed(() => {
+    const args = this.consultaResuelta().argumentos.map((a) =>
+      LETRAS_VARIABLES.includes(a) ? a : `'${a}'`,
+    );
+    return `${this.predicado()}(${args.join(', ')})`;
+  });
+
   protected estiloArgumento(valor: string): string {
     return valor === '' ? SELECT_VARIABLE : SELECT_CONSTANTE;
   }
@@ -75,18 +96,9 @@ export class PanelConsulta {
 
   protected async consultar(): Promise<void> {
     this.error.set(null);
-    let libre = 0;
-    const variables: string[] = [];
-    const args = this.argumentos().map((a) => {
-      if (a !== '') {
-        return a;
-      }
-      const letra = LETRAS_VARIABLES[libre++];
-      variables.push(letra);
-      return letra;
-    });
+    const { argumentos, variables } = this.consultaResuelta();
     try {
-      const filas = await this.kb.consultar(this.predicado(), args);
+      const filas = await this.kb.consultar(this.predicado(), argumentos);
       this.variablesConsultadas.set(variables);
       this.resultados.set(filas);
     } catch {

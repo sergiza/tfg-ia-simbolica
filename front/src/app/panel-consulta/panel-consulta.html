@@ -41,22 +41,33 @@
   </button>
 
   @if (abierta() && disponible()) {
-    <div class="grid gap-6 border-t border-slate-700 bg-white p-6 md:grid-cols-2">
-      <div class="space-y-4">
-        <div>
-          <p class="mb-1 text-xs font-semibold tracking-wide text-slate-500 uppercase">Predicado</p>
-          <app-combobox
-            class="block"
-            [valor]="predicado()"
-            [grupos]="gruposPredicado()"
-            [estilo]="estiloPredicado"
-            etiqueta="Predicado"
-            marcador="predicado…"
-            ancho="w-full"
-            (cambio)="elegirPredicado($event)"
-          />
-        </div>
+    <div
+      class="grid content-start gap-6 border-t border-slate-700 bg-white p-6 md:min-h-[40vh] md:grid-cols-2"
+    >
+      <div>
+        <p class="mb-1 text-xs font-semibold tracking-wide text-slate-500 uppercase">Predicado</p>
+        <app-combobox
+          class="block"
+          [valor]="predicado()"
+          [grupos]="gruposPredicado()"
+          [estilo]="estiloPredicado"
+          etiqueta="Predicado"
+          marcador="predicado…"
+          ancho="w-full"
+          (cambio)="elegirPredicado($event)"
+        />
+      </div>
 
+      <div>
+        <p class="mb-1 text-xs font-semibold tracking-wide text-slate-500 uppercase">Consulta</p>
+        @if (predicado() === '') {
+          <p class="text-sm text-slate-400 italic">Elige un predicado.</p>
+        } @else {
+          <p class="py-1.5 font-mono text-sm text-slate-500">{{ consultaTexto() }}</p>
+        }
+      </div>
+
+      <div class="space-y-4">
         @if (argumentos().length > 0) {
           <fieldset>
             <legend class="mb-1 text-xs font-semibold tracking-wide text-slate-500 uppercase">
@@ -94,7 +105,7 @@
       </div>
 
       <div>
-        <h3 class="mb-2 text-xs font-semibold tracking-wide text-slate-500 uppercase">
+        <h3 class="mb-1 text-xs font-semibold tracking-wide text-slate-500 uppercase">
           Resultados
         </h3>
         @if (resultados() === null) {
