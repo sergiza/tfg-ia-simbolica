@@ -25,30 +25,15 @@
     </button>
   </span>
 } @else {
-  <select (change)="elegir($event)" [attr.aria-label]="etiqueta()" [class]="estiloSelect()">
-    <option value="" disabled [selected]="valor() === ''">elige…</option>
-    @if (variables() !== null) {
-      <optgroup label="Variables">
-        @for (v of variables()!; track v) {
-          <option [value]="v" [selected]="v === valor()">{{ v }}</option>
-        }
-        @if (nuevaVariable()) {
-          <option [value]="nuevaVariable()!" [selected]="nuevaVariable() === valor()">
-            {{ nuevaVariable() }} · nueva
-          </option>
-        }
-      </optgroup>
-      <optgroup label="Constantes">
-        @for (t of kb.terminos(); track t) {
-          <option [value]="t" [selected]="t === valor()">{{ t }}</option>
-        }
-        <option value="__nueva__">+ nueva constante…</option>
-      </optgroup>
-    } @else {
-      @for (t of kb.terminos(); track t) {
-        <option [value]="t" [selected]="t === valor()">{{ t }}</option>
-      }
-      <option value="__nueva__">+ nueva constante…</option>
-    }
-  </select>
+  <app-combobox
+    [valor]="valor()"
+    [grupos]="grupos()"
+    [etiqueta]="etiqueta()"
+    [estilo]="estiloEntrada()"
+    marcador="valor…"
+    textoCrear="nueva constante"
+    ancho="w-40"
+    (cambio)="elegir($event)"
+    (crear)="pedirCrear($event)"
+  />
 }

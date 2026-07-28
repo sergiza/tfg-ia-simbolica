@@ -1,0 +1,108 @@
+<div class="relative inline-block" [class]="ancho()">
+  <input
+    #entrada
+    type="text"
+    role="combobox"
+    autocomplete="off"
+    aria-autocomplete="list"
+    [id]="id"
+    [value]="abierto() ? consulta() : valor()"
+    [placeholder]="marcador()"
+    [attr.aria-label]="etiqueta()"
+    [attr.aria-expanded]="abierto()"
+    [attr.aria-controls]="id + '-lista'"
+    [attr.aria-activedescendant]="abierto() ? id + '-op-' + indiceActivo() : null"
+    (focus)="abrir()"
+    (input)="escribir($event)"
+    (keydown)="teclear($event)"
+    (blur)="cerrar()"
+    [class]="'w-full pr-7 ' + estilo()"
+  />
+
+  <button
+    type="button"
+    tabindex="-1"
+    aria-hidden="true"
+    (mousedown)="$event.preventDefault()"
+    (click)="alternar()"
+    class="absolute inset-y-0 right-0 flex items-center px-1.5 text-slate-400 hover:text-slate-600"
+  >
+    <svg
+      class="size-4 shrink-0"
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 20 20"
+      fill="currentColor"
+    >
+      <path
+        fill-rule="evenodd"
+        d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z"
+        clip-rule="evenodd"
+      />
+    </svg>
+  </button>
+
+  @if (abierto()) {
+    <ul
+      role="listbox"
+      [id]="id + '-lista'"
+      [attr.aria-label]="etiqueta()"
+      (mousedown)="$event.preventDefault()"
+      [class]="estiloLista"
+    >
+      @for (grupo of vista().grupos; track grupo.titulo) {
+        @if (grupo.titulo !== null) {
+          <li role="presentation" [class]="estiloGrupo">{{ grupo.titulo }}</li>
+        }
+        @for (fila of grupo.filas; track fila.opcion.valor) {
+          <li
+            #opcionFila
+            role="option"
+            [id]="id + '-op-' + fila.indice"
+            [attr.aria-selected]="fila.opcion.valor === valor()"
+            (click)="elegir(fila.indice)"
+            (mouseenter)="indiceActivo.set(fila.indice)"
+            [class]="
+              estiloFila +
+              ' ' +
+              (fila.opcion.clase ?? '') +
+              (indiceActivo() === fila.indice ? ' bg-slate-100' : '')
+            "
+          >
+            <span>
+              @for (s of fila.segmentos; track $index) {
+                @if (s.resaltado) {
+                  <span class="font-bold underline decoration-2">{{ s.texto }}</span>
+                } @else {
+                  <span>{{ s.texto }}</span>
+                }
+              }
+            </span>
+            @if (fila.opcion.nota) {
+              <span class="text-xs font-normal text-slate-400 italic">{{ fila.opcion.nota }}</span>
+            }
+          </li>
+        }
+      }
+
+      @if (vista().crear; as filaCrear) {
+        <li
+          #opcionFila
+          role="option"
+          [id]="id + '-op-' + filaCrear.indice"
+          aria-selected="false"
+          (click)="elegir(filaCrear.indice)"
+          (mouseenter)="indiceActivo.set(filaCrear.indice)"
+          [class]="
+            estiloFila +
+            ' ' +
+            estiloCrear +
+            ' border-t border-slate-200' +
+            (indiceActivo() === filaCrear.indice ? ' bg-slate-100' : '')
+          "
+        >
+          {{ etiquetaCrear() }}
+        </li>
+      }
+    </ul>
+  }
+</div>

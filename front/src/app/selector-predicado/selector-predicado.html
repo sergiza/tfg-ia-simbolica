@@ -38,11 +38,15 @@
     </button>
   </span>
 } @else {
-  <select (change)="elegir($event)" [attr.aria-label]="etiqueta()" [class]="estiloSelect">
-    <option value="" disabled [selected]="valor() === ''">predicado…</option>
-    @for (p of kb.vocabulario(); track p.nombre) {
-      <option [value]="p.nombre" [selected]="p.nombre === valor()">{{ p.nombre }}</option>
-    }
-    <option value="__nuevo__">+ nuevo predicado…</option>
-  </select>
+  <app-combobox
+    [valor]="valor()"
+    [grupos]="grupos()"
+    [etiqueta]="etiqueta()"
+    [estilo]="estiloEntrada"
+    marcador="predicado…"
+    textoCrear="nuevo predicado"
+    ancho="w-44"
+    (cambio)="elegir($event)"
+    (crear)="pedirCrear($event)"
+  />
 }

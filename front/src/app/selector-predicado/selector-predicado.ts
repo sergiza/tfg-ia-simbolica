@@ -1,11 +1,13 @@
 import { Component, computed, inject, input, output, signal } from '@angular/core';
+import { Combobox, GrupoCombo } from '../combobox/combobox';
 import { ConocimientoService } from '../conocimiento-service';
-import { SELECT_PREDICADO } from '../estilos';
+import { OPCION_PREDICADO, SELECT_PREDICADO } from '../estilos';
 import { PredicadoDeclarado, esNombreValido } from '../modelos';
 
 @Component({
   selector: 'app-selector-predicado',
   templateUrl: './selector-predicado.html',
+  imports: [Combobox],
 })
 export class SelectorPredicado {
   protected readonly kb = inject(ConocimientoService);
@@ -15,7 +17,7 @@ export class SelectorPredicado {
   readonly cambio = output<string>();
   readonly borrador = output<PredicadoDeclarado | null>();
 
-  protected readonly estiloSelect = SELECT_PREDICADO;
+  protected readonly estiloEntrada = SELECT_PREDICADO;
 
   protected readonly creando = signal(false);
   protected readonly nombreNuevo = signal('');
@@ -23,15 +25,26 @@ export class SelectorPredicado {
 
   protected readonly nombreValido = computed(() => esNombreValido(this.nombreNuevo().trim()));
 
-  protected elegir(evento: Event): void {
-    const valor = (evento.target as HTMLSelectElement).value;
-    if (valor === '__nuevo__') {
-      this.creando.set(true);
-      this.nombreNuevo.set('');
-      this.emitirBorrador();
-      return;
-    }
+  protected readonly grupos = computed<GrupoCombo[]>(() => [
+    {
+      titulo: null,
+      opciones: this.kb.vocabulario().map((p) => ({
+        valor: p.nombre,
+        etiqueta: p.nombre,
+        nota: `${p.aridad} términos`,
+        clase: OPCION_PREDICADO,
+      })),
+    },
+  ]);
+
+  protected elegir(valor: string): void {
     this.cambio.emit(valor);
+  }
+
+  protected pedirCrear(texto: string): void {
+    this.nombreNuevo.set(texto.trim().toLowerCase());
+    this.creando.set(true);
+    this.emitirBorrador();
   }
 
   protected actualizarNombre(evento: Event): void {
