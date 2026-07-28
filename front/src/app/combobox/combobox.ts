@@ -48,7 +48,7 @@ export class Combobox {
   readonly marcador = input('elige…');
   readonly estilo = input('');
   readonly ancho = input('w-40');
-  readonly textoCrear = input<string | null>(null);
+  readonly etiquetaCrear = input<((texto: string) => string) | null>(null);
   readonly cambio = output<string>();
   readonly crear = output<string>();
 
@@ -68,14 +68,15 @@ export class Combobox {
   protected readonly vista = computed(() => {
     const consulta = this.consulta();
     const grupos: GrupoVista[] = [];
-    let indice = 0;
+    const todas: FilaVista[] = [];
 
     for (const grupo of this.grupos()) {
-      const filas = filtrar(grupo.opciones, consulta, (o) => o.etiqueta).map((c) => ({
-        opcion: c.elemento,
-        segmentos: c.segmentos,
-        indice: indice++,
-      }));
+      const filas: FilaVista[] = [];
+      for (const c of filtrar(grupo.opciones, consulta, (o) => o.etiqueta)) {
+        const fila = { opcion: c.elemento, segmentos: c.segmentos, indice: todas.length };
+        todas.push(fila);
+        filas.push(fila);
+      }
       if (filas.length > 0) {
         grupos.push({ titulo: grupo.titulo, filas });
       }
@@ -83,26 +84,21 @@ export class Combobox {
 
     const texto = consulta.trim();
     const existe = this.grupos().some((g) => g.opciones.some((o) => o.valor === texto));
-    const crear = this.textoCrear() !== null && !existe ? { indice: indice++ } : null;
+    const crear = this.etiquetaCrear() !== null && !existe ? { indice: todas.length } : null;
 
-    return { grupos, crear, total: indice };
+    return { grupos, todas, crear, total: todas.length + (crear === null ? 0 : 1) };
   });
 
   protected readonly textoValor = computed(() => {
-    const valor = this.valor();
-    for (const grupo of this.grupos()) {
-      for (const opcion of grupo.opciones) {
-        if (opcion.valor === valor) {
-          return opcion.etiqueta;
-        }
-      }
-    }
-    return valor;
+    const opcion = this.grupos()
+      .flatMap((g) => g.opciones)
+      .find((o) => o.valor === this.valor());
+    return opcion?.etiqueta ?? this.valor();
   });
 
-  protected readonly etiquetaCrear = computed(() => {
-    const texto = this.consulta().trim();
-    return texto === '' ? `+ ${this.textoCrear()}…` : `+ crear «${texto}»`;
+  protected readonly textoFilaCrear = computed(() => {
+    const etiqueta = this.etiquetaCrear();
+    return etiqueta === null ? '' : etiqueta(this.consulta().trim());
   });
 
   constructor() {
@@ -144,23 +140,19 @@ export class Combobox {
   }
 
   protected elegir(indice: number): void {
-    const vista = this.vista();
-    const texto = this.consulta().trim();
+    const { todas, crear } = this.vista();
 
-    if (vista.crear !== null && vista.crear.indice === indice) {
+    if (crear !== null && crear.indice === indice) {
+      const texto = this.consulta().trim();
       this.cerrar();
       this.crear.emit(texto);
       return;
     }
 
-    for (const grupo of vista.grupos) {
-      for (const fila of grupo.filas) {
-        if (fila.indice === indice) {
-          this.cerrar();
-          this.cambio.emit(fila.opcion.valor);
-          return;
-        }
-      }
+    const fila = todas[indice];
+    if (fila !== undefined) {
+      this.cerrar();
+      this.cambio.emit(fila.opcion.valor);
     }
   }
 
@@ -214,13 +206,7 @@ export class Combobox {
   }
 
   private indiceDe(valor: string): number {
-    for (const grupo of this.vista().grupos) {
-      for (const fila of grupo.filas) {
-        if (fila.opcion.valor === valor) {
-          return fila.indice;
-        }
-      }
-    }
-    return 0;
+    const indice = this.vista().todas.findIndex((f) => f.opcion.valor === valor);
+    return indice === -1 ? 0 : indice;
   }
 }

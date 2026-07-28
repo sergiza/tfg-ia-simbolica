@@ -8,7 +8,7 @@ import {
   SELECT_NEUTRO,
   SELECT_VARIABLE,
 } from '../estilos';
-import { LETRAS_VARIABLES, esNombreValido } from '../modelos';
+import { esConstanteValida, esNombreValido, esNumero, esVariable } from '../modelos';
 
 @Component({
   selector: 'app-selector-valor',
@@ -20,6 +20,7 @@ export class SelectorValor {
 
   readonly valor = input('');
   readonly etiqueta = input('Valor');
+  readonly ancho = input('w-40');
   readonly variables = input<string[] | null>(null);
   readonly nuevaVariable = input<string | null>(null);
   readonly cambio = output<string>();
@@ -27,7 +28,7 @@ export class SelectorValor {
   protected readonly creando = signal(false);
   protected readonly nombreNuevo = signal('');
 
-  protected readonly nombreValido = computed(() => esNombreValido(this.nombreNuevo().trim()));
+  protected readonly nombreValido = computed(() => esConstanteValida(this.nombreNuevo().trim()));
 
   protected readonly estiloEntrada = computed(() => {
     if (this.variables() === null) {
@@ -36,47 +37,68 @@ export class SelectorValor {
     if (this.valor() === '') {
       return SELECT_NEUTRO;
     }
-    return LETRAS_VARIABLES.includes(this.valor()) ? SELECT_VARIABLE : SELECT_CONSTANTE;
+    return esVariable(this.valor()) ? SELECT_VARIABLE : SELECT_CONSTANTE;
   });
 
   protected readonly grupos = computed<GrupoCombo[]>(() => {
-    const constantes: OpcionCombo[] = this.kb
-      .terminos()
-      .map((t) => ({ valor: t, etiqueta: t, clase: OPCION_CONSTANTE }));
+    const grupos: GrupoCombo[] = [];
 
     const variables = this.variables();
-    if (variables === null) {
-      return [{ titulo: null, opciones: constantes }];
+    if (variables !== null) {
+      const opciones: OpcionCombo[] = variables.map((v) => ({
+        valor: v,
+        etiqueta: v,
+        clase: OPCION_VARIABLE,
+      }));
+      const nueva = this.nuevaVariable();
+      if (nueva !== null) {
+        opciones.push({ valor: nueva, etiqueta: nueva, nota: 'nueva', clase: OPCION_VARIABLE });
+      }
+      grupos.push({ titulo: 'Variables', opciones });
     }
 
-    const opciones: OpcionCombo[] = variables.map((v) => ({
-      valor: v,
-      etiqueta: v,
-      clase: OPCION_VARIABLE,
-    }));
-    const nueva = this.nuevaVariable();
-    if (nueva !== null) {
-      opciones.push({ valor: nueva, etiqueta: nueva, nota: 'nueva', clase: OPCION_VARIABLE });
+    const constantes = this.kb.constantes();
+    if (constantes.length > 0) {
+      grupos.push({
+        titulo: 'Constantes',
+        opciones: constantes.map((t) => ({ valor: t, etiqueta: t, clase: OPCION_CONSTANTE })),
+      });
     }
 
-    return [
-      { titulo: 'Variables', opciones },
-      { titulo: 'Constantes', opciones: constantes },
-    ];
+    const numeros = this.kb.numeros();
+    if (numeros.length > 0) {
+      grupos.push({
+        titulo: 'Números',
+        opciones: numeros.map((n) => ({ valor: n, etiqueta: n, clase: OPCION_CONSTANTE })),
+      });
+    }
+
+    return grupos.length === 1 ? [{ ...grupos[0], titulo: null }] : grupos;
   });
+
+  protected readonly etiquetaCrear = (texto: string): string => {
+    if (texto === '') {
+      return '+ nueva constante…';
+    }
+    return esNumero(texto) ? `+ usar el número ${texto}` : `+ crear «${texto}»`;
+  };
 
   protected elegir(valor: string): void {
     this.cambio.emit(valor);
   }
 
   protected pedirCrear(texto: string): void {
-    const nombre = texto.trim().toLowerCase();
-    if (esNombreValido(nombre)) {
-      this.kb.registrarConstante(nombre);
-      this.cambio.emit(nombre);
+    const valor = texto.trim().toLowerCase();
+    if (esNumero(valor)) {
+      this.cambio.emit(valor);
       return;
     }
-    this.nombreNuevo.set(nombre);
+    if (esNombreValido(valor)) {
+      this.kb.registrarConstante(valor);
+      this.cambio.emit(valor);
+      return;
+    }
+    this.nombreNuevo.set(valor);
     this.creando.set(true);
   }
 

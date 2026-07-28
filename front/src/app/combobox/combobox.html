@@ -78,7 +78,9 @@
               }
             </span>
             @if (fila.opcion.nota) {
-              <span class="text-xs font-normal text-slate-400 italic">{{ fila.opcion.nota }}</span>
+              <span class="text-xs font-normal whitespace-nowrap text-slate-400 italic">{{
+                fila.opcion.nota
+              }}</span>
             }
           </li>
         }
@@ -100,7 +102,7 @@
             (indiceActivo() === filaCrear.indice ? ' bg-slate-100' : '')
           "
         >
-          {{ etiquetaCrear() }}
+          {{ textoFilaCrear() }}
         </li>
       }
     </ul>

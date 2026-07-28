@@ -24,7 +24,7 @@
       <li class="group flex items-center justify-between gap-2 rounded px-2 py-1 hover:bg-slate-50">
         <code class="font-mono text-sm">
           <span class="font-semibold">{{ h.predicado }}</span
-          >({{ h.terminos.join(', ') }})
+          >({{ formatearTerminos(h.terminos) }})
         </code>
         <button
           type="button"

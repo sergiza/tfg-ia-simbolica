@@ -8,6 +8,11 @@ export interface Coincidencia<T> {
   segmentos: Segmento[];
 }
 
+interface Encontrado<T> extends Coincidencia<T> {
+  puntos: number;
+  longitud: number;
+}
+
 function indicesDe(texto: string, consulta: string): number[] | null {
   const objetivo = texto.toLowerCase();
   const indices: number[] = [];
@@ -23,13 +28,13 @@ function indicesDe(texto: string, consulta: string): number[] | null {
   return indices;
 }
 
-function puntuar(indices: number[], longitud: number): number {
+function puntuar(indices: number[]): number {
   let puntos = indices[0] === 0 ? 12 : 0;
   for (let i = 1; i < indices.length; i++) {
     const salto = indices[i] - indices[i - 1];
     puntos += salto === 1 ? 6 : -salto;
   }
-  return puntos - longitud / 100;
+  return puntos;
 }
 
 function segmentar(texto: string, indices: number[]): Segmento[] {
@@ -67,7 +72,7 @@ export function filtrar<T>(
     }));
   }
 
-  const encontrados: (Coincidencia<T> & { puntos: number })[] = [];
+  const encontrados: Encontrado<T>[] = [];
   for (const elemento of elementos) {
     const cadena = texto(elemento);
     const indices = indicesDe(cadena, buscado);
@@ -75,11 +80,12 @@ export function filtrar<T>(
       encontrados.push({
         elemento,
         segmentos: segmentar(cadena, indices),
-        puntos: puntuar(indices, cadena.length),
+        puntos: puntuar(indices),
+        longitud: cadena.length,
       });
     }
   }
-  return encontrados
-    .sort((a, b) => b.puntos - a.puntos)
-    .map(({ elemento, segmentos }) => ({ elemento, segmentos }));
+
+  encontrados.sort((a, b) => b.puntos - a.puntos || a.longitud - b.longitud);
+  return encontrados.map(({ elemento, segmentos }) => ({ elemento, segmentos }));
 }

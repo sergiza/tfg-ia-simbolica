@@ -16,9 +16,9 @@
         aria-label="Número de términos"
         class="rounded border border-slate-300 bg-white px-2 py-1.5 text-sm focus:border-indigo-500 focus:outline-none"
       >
-        <option [value]="1" [selected]="aridadNueva() === 1">1</option>
-        <option [value]="2" [selected]="aridadNueva() === 2">2</option>
-        <option [value]="3" [selected]="aridadNueva() === 3">3</option>
+        @for (n of aridades; track n) {
+          <option [value]="n" [selected]="aridadNueva() === n">{{ n }}</option>
+        }
       </select>
     </label>
     <button
@@ -44,7 +44,7 @@
     [etiqueta]="etiqueta()"
     [estilo]="estiloEntrada"
     marcador="predicado…"
-    textoCrear="nuevo predicado"
+    [etiquetaCrear]="etiquetaCrear"
     ancho="w-44"
     (cambio)="elegir($event)"
     (crear)="pedirCrear($event)"

@@ -75,16 +75,49 @@
             </legend>
             <div class="space-y-2">
               @for (a of argumentos(); track $index) {
-                <app-combobox
-                  class="block"
-                  [valor]="a"
-                  [grupos]="gruposArgumento()"
-                  [estilo]="estiloArgumento(a)"
-                  [etiqueta]="'Argumento ' + ($index + 1)"
-                  marcador="valor…"
-                  ancho="w-full"
-                  (cambio)="elegirArgumento($index, $event)"
-                />
+                @let i = $index;
+                <div class="flex flex-wrap items-center gap-2">
+                  <app-combobox
+                    [valor]="a"
+                    [grupos]="gruposArgumento()"
+                    [estilo]="estiloArgumento(a)"
+                    [etiqueta]="'Argumento ' + (i + 1)"
+                    marcador="valor…"
+                    ancho="w-32"
+                    (cambio)="elegirArgumento(i, $event)"
+                  />
+                  @if (a === '') {
+                    @if (filtro(i); as f) {
+                      <app-combobox
+                        [valor]="f.operador"
+                        [grupos]="gruposComparador"
+                        [estilo]="estiloComparador"
+                        [etiqueta]="'Comparador del argumento ' + (i + 1)"
+                        marcador="op…"
+                        ancho="w-24"
+                        (cambio)="ponerFiltro(i, 'operador', $event)"
+                      />
+                      <app-selector-valor
+                        [valor]="f.valor"
+                        ancho="w-32"
+                        [etiqueta]="'Valor con el que comparar el argumento ' + (i + 1)"
+                        (cambio)="ponerFiltro(i, 'valor', $event)"
+                      />
+                      <button
+                        type="button"
+                        (click)="quitarFiltro(i)"
+                        aria-label="Quitar filtro"
+                        class="rounded px-2 py-1 text-lg leading-none text-slate-400 hover:text-red-600"
+                      >
+                        ×
+                      </button>
+                    } @else {
+                      <button type="button" (click)="agregarFiltro(i)" [class]="estiloExtender">
+                        + filtro
+                      </button>
+                    }
+                  }
+                </div>
               }
             </div>
           </fieldset>
@@ -97,7 +130,7 @@
         <button
           type="button"
           (click)="consultar()"
-          [disabled]="predicado() === ''"
+          [disabled]="predicado() === '' || !filtrosCompletos()"
           class="rounded bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-500 disabled:cursor-not-allowed disabled:bg-slate-300"
         >
           Consultar

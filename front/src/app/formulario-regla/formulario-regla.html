@@ -16,59 +16,132 @@
 
   @if (predicado() !== '') {
     <div>
-      <p class="mb-2 text-xs font-semibold tracking-wide text-slate-500 uppercase">
-        Se cumple cuando
-      </p>
+      <div class="mb-2 flex flex-wrap items-baseline gap-x-4 gap-y-1">
+        <p class="text-xs font-semibold tracking-wide text-slate-500 uppercase">Se cumple cuando</p>
+        <p class="font-mono text-sm text-slate-500">{{ reglaTexto() }}</p>
+      </div>
       <div class="space-y-3">
-        @for (lit of cuerpo(); track $index) {
-          @let literal = $index;
+        @for (cond of cuerpo(); track $index) {
+          @let fila = $index;
           <div class="flex flex-wrap items-center gap-2">
-            <app-selector-predicado
-              [valor]="lit.predicado"
-              [etiqueta]="'Predicado de la condición ' + (literal + 1)"
-              (cambio)="elegirPredicadoLiteral(literal, $event)"
-            />
-            @if (lit.predicado !== '') {
-              <span class="font-mono text-lg text-slate-400">(</span>
-              @for (a of lit.argumentos; track $index) {
-                @if ($index > 0) {
-                  <span class="font-mono text-lg text-slate-400">,</span>
+            @if (cond.tipo === 'literal') {
+              @if (cond.predicado !== '') {
+                <button
+                  type="button"
+                  (click)="alternarNegado(fila)"
+                  [attr.aria-pressed]="cond.negado"
+                  aria-label="No: negar esta condición"
+                  class="rounded border px-2 py-1.5 font-mono text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                  [class]="
+                    cond.negado
+                      ? 'border-slate-700 bg-slate-700 text-white'
+                      : 'border-transparent text-slate-500 hover:border-slate-300 hover:bg-white'
+                  "
+                >
+                  no
+                </button>
+              }
+              <app-selector-predicado
+                [valor]="cond.predicado"
+                [comparadores]="true"
+                [etiqueta]="'Predicado de la condición ' + (fila + 1)"
+                (cambio)="elegirPredicadoLiteral(fila, $event)"
+                (operador)="elegirComparador(fila, $event)"
+              />
+              @if (cond.predicado !== '') {
+                <span class="font-mono text-lg text-slate-400">(</span>
+                @for (a of cond.argumentos; track $index) {
+                  @if ($index > 0) {
+                    <span class="font-mono text-lg text-slate-400">,</span>
+                  }
+                  <app-selector-valor
+                    [valor]="a"
+                    [variables]="variablesEnJuego()"
+                    [nuevaVariable]="nuevaVariable()"
+                    [etiqueta]="'Argumento ' + ($index + 1) + ' de la condición ' + (fila + 1)"
+                    (cambio)="ponerArgumento(fila, $index, $event)"
+                  />
                 }
+                <span class="font-mono text-lg text-slate-400">)</span>
+              }
+            } @else {
+              <app-selector-valor
+                [valor]="cond.izquierda"
+                [variables]="variablesEnJuego()"
+                [nuevaVariable]="nuevaVariable()"
+                [etiqueta]="'Lado izquierdo de la comparación ' + (fila + 1)"
+                (cambio)="ponerCampo(fila, 'izquierda', $event)"
+              />
+              <app-combobox
+                [valor]="cond.operador"
+                [grupos]="gruposComparador"
+                [estilo]="estiloComparador"
+                [etiqueta]="'Comparador de la condición ' + (fila + 1)"
+                marcador="op…"
+                ancho="w-24"
+                (cambio)="ponerCampo(fila, 'operador', $event)"
+              />
+              <app-selector-valor
+                [valor]="cond.derecha"
+                [variables]="variablesEnJuego()"
+                [nuevaVariable]="nuevaVariable()"
+                [etiqueta]="'Lado derecho de la comparación ' + (fila + 1)"
+                (cambio)="ponerCampo(fila, 'derecha', $event)"
+              />
+              @if (cond.operacion === '') {
+                <button
+                  type="button"
+                  (click)="ponerCampo(fila, 'operacion', '+')"
+                  [class]="estiloExtender"
+                >
+                  + operación
+                </button>
+              } @else {
+                <app-combobox
+                  [valor]="cond.operacion"
+                  [grupos]="gruposOperacion"
+                  [estilo]="estiloOperacion"
+                  [etiqueta]="'Operación aritmética de la condición ' + (fila + 1)"
+                  ancho="w-24"
+                  (cambio)="ponerCampo(fila, 'operacion', $event)"
+                />
                 <app-selector-valor
-                  [valor]="a"
+                  [valor]="cond.derecha2"
                   [variables]="variablesEnJuego()"
                   [nuevaVariable]="nuevaVariable()"
-                  [etiqueta]="'Argumento ' + ($index + 1) + ' de la condición ' + (literal + 1)"
-                  (cambio)="ponerArgumento(literal, $index, $event)"
+                  [etiqueta]="'Segundo operando de la condición ' + (fila + 1)"
+                  (cambio)="ponerCampo(fila, 'derecha2', $event)"
                 />
               }
-              <span class="font-mono text-lg text-slate-400">)</span>
             }
             <button
               type="button"
-              (click)="quitarLiteral(literal)"
-              [disabled]="cuerpo().length === 1"
+              (click)="quitarCondicion(fila)"
               aria-label="Quitar condición"
-              class="rounded px-2 py-1 text-lg leading-none text-slate-400 hover:text-red-600 disabled:cursor-not-allowed disabled:opacity-30"
+              class="rounded px-2 py-1 text-lg leading-none text-slate-400 hover:text-red-600"
             >
               ×
             </button>
           </div>
         }
-        <button
-          type="button"
-          (click)="agregarLiteral()"
-          class="rounded border border-slate-300 bg-white px-3 py-1 text-sm text-slate-600 hover:bg-slate-50"
-        >
+        <button type="button" (click)="agregarCondicion()" [class]="estiloExtender">
           + condición
         </button>
       </div>
     </div>
 
-    @if (camposCompletos() && variablesSinUsar().length > 0) {
+    @if (camposCompletos() && variablesCabezaSinLigar().length > 0) {
       <p class="text-sm text-amber-700">
-        Cada variable de la definición debe aparecer en alguna condición. Falta:
-        {{ variablesSinUsar().join(', ') }}
+        Cada variable de la definición debe aparecer en alguna condición sin negar. Falta:
+        {{ variablesCabezaSinLigar().join(', ') }}
+      </p>
+    }
+
+    @if (variablesCuerpoSinLigar().length > 0) {
+      <p class="text-sm text-amber-700">
+        Una variable que solo aparece en una negación o en una comparación no tiene ningún valor
+        asignado. Añade una condición sin negar que la use:
+        {{ variablesCuerpoSinLigar().join(', ') }}
       </p>
     }
 

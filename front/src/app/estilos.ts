@@ -8,6 +8,8 @@ export const SELECT_VARIABLE = `${SELECT_BASE} border-amber-300 bg-amber-50 text
 
 export const SELECT_NEUTRO = `${SELECT_BASE} border-slate-300 bg-white text-slate-900 focus:border-indigo-500`;
 
+export const SELECT_OPERACION = `${SELECT_BASE} border-violet-300 bg-violet-50 text-violet-900 focus:border-violet-600`;
+
 export const COMBO_LISTA =
   'absolute z-20 mt-1 max-h-60 w-full min-w-max overflow-y-auto rounded border border-slate-300 bg-white py-1 shadow-lg';
 
@@ -22,3 +24,10 @@ export const OPCION_CONSTANTE = 'text-emerald-900';
 export const OPCION_VARIABLE = 'text-amber-900';
 
 export const OPCION_CREAR = 'text-indigo-700';
+
+export const OPCION_NEUTRA = 'text-slate-700';
+
+export const OPCION_OPERACION = 'text-violet-700';
+
+export const BOTON_EXTENDER =
+  'rounded border border-dashed border-slate-400 px-3 py-1.5 text-sm text-slate-600 hover:border-slate-600 hover:bg-slate-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600';

@@ -54,6 +54,42 @@ describe('App', () => {
     });
     const compiled = fixture.nativeElement as HTMLElement;
     expect(compiled.textContent).toContain('padre');
-    expect(compiled.textContent).toContain('(juan, maria)');
+    expect(compiled.textContent).toContain("('juan', 'maria')");
+  });
+
+  it('debería pintar los números de un hecho sin comillas', async () => {
+    const fixture = await crearApp({
+      hechos: [{ predicado: 'hoyo', terminos: ['3', '1'] }],
+      reglas: [],
+    });
+    const compiled = fixture.nativeElement as HTMLElement;
+    expect(compiled.textContent).toContain('(3, 1)');
+  });
+
+  it('debería pintar una regla con negación y comparación', async () => {
+    const fixture = await crearApp({
+      hechos: [{ predicado: 'brisa', terminos: ['2', '1'] }],
+      reglas: [
+        {
+          cabeza: { predicado: 'seguro', variables: ['X', 'Y'] },
+          cuerpo: [
+            { tipo: 'literal', predicado: 'brisa', argumentos: ['X', 'Y'], negado: false },
+            { tipo: 'literal', predicado: 'hoyo', argumentos: ['X', 'Y'], negado: true },
+            {
+              tipo: 'comparacion',
+              izquierda: 'X',
+              operador: '<',
+              derecha: 'Y',
+              operacion: '+',
+              derecha2: '1',
+            },
+          ],
+        },
+      ],
+    });
+    const compiled = fixture.nativeElement as HTMLElement;
+    expect(compiled.textContent).toContain(
+      'seguro(X, Y) <= brisa(X, Y) & ~hoyo(X, Y) & (X < Y + 1)',
+    );
   });
 });

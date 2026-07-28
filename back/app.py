@@ -46,7 +46,9 @@ def post_regla():
 @app.route('/consultar', methods=['POST'])
 def post_consultar():
     data = request.get_json()
-    resultados = kb.consultar(data['predicado'], data['argumentos'])
+    resultados = kb.consultar(
+        data['predicado'], data['argumentos'], data.get('condiciones')
+    )
     return jsonify(resultados)
 
 

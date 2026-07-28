@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, computed, inject, signal } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
-import { Estado, Hecho, PredicadoDeclarado, Regla } from './modelos';
+import { Comparacion, Estado, Hecho, PredicadoDeclarado, Regla, esNumero } from './modelos';
 
 const API = 'http://localhost:5000';
 
@@ -40,9 +40,16 @@ export class ConocimientoService {
       .sort((a, b) => a.nombre.localeCompare(b.nombre));
   });
 
-  readonly terminos = computed(() => {
-    const todos = [...this.hechos().flatMap((h) => h.terminos), ...this.constantesExtra()];
-    return [...new Set(todos)].sort();
+  readonly constantes = computed(() => {
+    const todas = [...this.hechos().flatMap((h) => h.terminos), ...this.constantesExtra()];
+    return [...new Set(todas)].filter((t) => !esNumero(t)).sort();
+  });
+
+  readonly numeros = computed(() => {
+    const todos = this.hechos()
+      .flatMap((h) => h.terminos)
+      .filter(esNumero);
+    return [...new Set(todos)].sort((a, b) => Number(a) - Number(b));
   });
 
   constructor() {
@@ -60,9 +67,10 @@ export class ConocimientoService {
   }
 
   registrarConstante(nombre: string): void {
-    if (!this.terminos().includes(nombre)) {
-      this.constantesExtra.update((constantes) => [...constantes, nombre]);
+    if (esNumero(nombre) || this.constantes().includes(nombre)) {
+      return;
     }
+    this.constantesExtra.update((constantes) => [...constantes, nombre]);
   }
 
   async cargarEstado(): Promise<void> {
@@ -103,9 +111,13 @@ export class ConocimientoService {
     this.constantesExtra.set([]);
   }
 
-  async consultar(predicado: string, argumentos: string[]): Promise<string[][]> {
+  async consultar(
+    predicado: string,
+    argumentos: string[],
+    condiciones: Comparacion[],
+  ): Promise<string[][]> {
     return firstValueFrom(
-      this.http.post<string[][]>(`${API}/consultar`, { predicado, argumentos }),
+      this.http.post<string[][]>(`${API}/consultar`, { predicado, argumentos, condiciones }),
     );
   }
 }
