@@ -13,7 +13,7 @@ export class Home {
 
   protected async nuevaBase(): Promise<void> {
     const vacia = this.kb.hechos().length === 0 && this.kb.reglas().length === 0;
-    if (!vacia && !confirm('Se vaciará la base de conocimiento actual. ¿Seguir?')) {
+    if (!vacia && !confirm('Se vaciará la base de conocimiento actual. ¿Continuar?')) {
       return;
     }
     await this.kb.reiniciar();

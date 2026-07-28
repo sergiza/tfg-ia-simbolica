@@ -1,11 +1,27 @@
 <div class="mx-auto max-w-3xl p-8">
-  <h2 class="mb-4 text-2xl font-bold">Inicio</h2>
-  <p class="mb-6 text-slate-600">TO DO</p>
+  <h2 class="text-2xl font-bold">DatalogVisual</h2>
+  <p class="mt-1 mb-6 text-lg text-slate-500">
+    Editor visual para el aprendizaje de la inteligencia artificial simbólica
+  </p>
+
+  <p class="mb-4 text-slate-600">
+    La inteligencia artificial simbólica representa el conocimiento de forma explícita, mediante
+    hechos y reglas legibles por una persona, y obtiene conclusiones razonando sobre ellos.
+    <strong class="font-semibold text-slate-900">Datalog</strong> es uno de los lenguajes que
+    permiten expresarlo. En lugar de describir los pasos que conducen a una respuesta, se declara lo
+    que se sabe y se formulan preguntas. El motor de inferencia se encarga de deducir el resto.
+  </p>
+
+  <p class="mb-4 text-slate-600">
+    Esta herramienta emplea pyDatalog, la implementación de Datalog como biblioteca de Python, de
+    modo que toda construcción realizada mediante los desplegables se corresponde con código
+    pyDatalog.
+  </p>
 
   <button
     type="button"
     (click)="nuevaBase()"
-    class="inline-flex items-center gap-2 rounded bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+    class="mt-2 inline-flex items-center gap-2 rounded bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
   >
     <svg
       aria-hidden="true"
@@ -20,4 +36,73 @@
     </svg>
     Nueva base de conocimiento
   </button>
+
+  <h3 class="mt-8 mb-3 text-sm font-semibold tracking-wide text-slate-500 uppercase">
+    Hechos, reglas y consultas
+  </h3>
+
+  <dl class="space-y-3 text-slate-600">
+    <div>
+      <dt class="font-semibold text-slate-900">Hecho</dt>
+      <dd>
+        Una afirmación que se da por cierta.
+        <code class="font-mono text-sm"
+          ><span class="text-sky-700">padre</span>(<span class="text-emerald-700">'homer'</span>,
+          <span class="text-emerald-700">'bart'</span>)</code
+        >
+        establece que Homer es padre de Bart.
+      </dd>
+    </div>
+    <div>
+      <dt class="font-semibold text-slate-900">Regla</dt>
+      <dd>
+        <span class="block">
+          Un enunciado condicional que permite deducir hechos nuevos a partir de los ya conocidos. X
+          es abuelo de Y cuando X es padre de alguien que, a su vez, es padre de Y.
+        </span>
+        <code class="my-2 block font-mono text-sm"
+          ><span class="text-sky-700">abuelo</span>(<span class="text-amber-700">X</span>,
+          <span class="text-amber-700">Y</span>) &lt;= <span class="text-sky-700">padre</span>(<span
+            class="text-amber-700"
+            >X</span
+          >, <span class="text-amber-700">Z</span>) &amp;
+          <span class="text-sky-700">padre</span>(<span class="text-amber-700">Z</span>,
+          <span class="text-amber-700">Y</span>)</code
+        >
+        <span class="block">
+          Las mayúsculas son variables y representan cualquier valor. Repetir una misma variable
+          obliga a que las dos posiciones coincidan. No es necesario declarar ningún abuelo, el
+          motor los deduce todos a partir de los hechos existentes.
+        </span>
+      </dd>
+    </div>
+    <div>
+      <dt class="font-semibold text-slate-900">Consulta</dt>
+      <dd>
+        Una pregunta formulada sobre el conocimiento disponible. Los argumentos que se dejan libres
+        actúan como incógnitas, y el motor devuelve todas las combinaciones de valores que las
+        satisfacen.
+      </dd>
+    </div>
+  </dl>
+
+  <h3 class="mt-8 mb-3 text-sm font-semibold tracking-wide text-slate-500 uppercase">
+    Uso de la herramienta
+  </h3>
+
+  <ol class="list-decimal space-y-2 pl-5 text-slate-600">
+    <li>
+      En <strong class="font-semibold text-slate-900">Añadir hecho</strong> se selecciona un
+      predicado y sus valores. La primera vez es necesario nombrarlos. A partir de entonces figuran
+      en las listas y basta con elegirlos.
+    </li>
+    <li>
+      En <strong class="font-semibold text-slate-900">Añadir regla</strong> se encadenan las
+      condiciones. Las variables no se nombran: el sistema asigna X, Y, Z a medida que se necesitan.
+    </li>
+    <li>
+      <strong class="font-semibold text-slate-900">Consultar</strong>, en la parte inferior, abre el
+      panel de preguntas. Se habilita en cuanto existe algún hecho.
+    </li>
+  </ol>
 </div>

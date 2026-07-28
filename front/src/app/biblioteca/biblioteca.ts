@@ -32,7 +32,7 @@ export class Biblioteca {
   constructor() {
     this.biblioteca
       .cargarLista()
-      .catch(() => this.error.set('No se pudo leer la biblioteca. ¿Está el servidor en marcha?'));
+      .catch(() => this.error.set('No se pudo leer la biblioteca.'));
   }
 
   protected clave(entrada: Entrada): string {
@@ -62,7 +62,7 @@ export class Biblioteca {
   }
 
   protected async borrar(entrada: Entrada): Promise<void> {
-    if (!confirm(`¿Borrar «${entrada.nombre}»? No se puede deshacer.`)) {
+    if (!confirm(`¿Borrar «${entrada.nombre}»?`)) {
       return;
     }
     this.error.set(null);
@@ -75,6 +75,6 @@ export class Biblioteca {
 
   private confirmarDescarte(): boolean {
     const vacia = this.kb.hechos().length === 0 && this.kb.reglas().length === 0;
-    return vacia || confirm('Se sustituirá la base de conocimiento actual. ¿Seguir?');
+    return vacia || confirm('Se sustituirá la base de conocimiento actual. ¿Continuar?');
   }
 }
