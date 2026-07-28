@@ -1,5 +1,5 @@
 import { Component, computed, inject, signal } from '@angular/core';
-import { Combobox, GrupoCombo } from '../combobox/combobox';
+import { Combobox, GrupoCombo } from '../../comun/combobox/combobox';
 import { ConocimientoService } from '../conocimiento-service';
 import {
   BOTON_EXTENDER,
@@ -8,7 +8,7 @@ import {
   OPCION_PREDICADO,
   SELECT_OPERACION,
   SELECT_PREDICADO,
-} from '../estilos';
+} from '../../comun/estilos';
 import {
   COMPARADORES,
   Comparacion,

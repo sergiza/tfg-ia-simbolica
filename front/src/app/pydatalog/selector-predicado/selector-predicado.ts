@@ -1,7 +1,7 @@
 import { Component, computed, inject, input, output, signal } from '@angular/core';
-import { Combobox, GrupoCombo } from '../combobox/combobox';
+import { Combobox, GrupoCombo } from '../../comun/combobox/combobox';
 import { ConocimientoService } from '../conocimiento-service';
-import { OPCION_PREDICADO, SELECT_PREDICADO } from '../estilos';
+import { OPCION_PREDICADO, SELECT_PREDICADO } from '../../comun/estilos';
 import {
   ARIDADES,
   COMPARADORES,

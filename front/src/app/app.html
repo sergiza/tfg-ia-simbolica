@@ -1,93 +1,33 @@
 <div class="flex h-dvh flex-col bg-slate-100 text-slate-900">
-  <header class="flex items-center justify-between border-b border-slate-300 bg-white px-6 py-4">
-    <h1 class="text-xl font-bold">IA Simbólica</h1>
-    <button
-      type="button"
-      (click)="reiniciar()"
-      class="inline-flex items-center gap-2 rounded border border-slate-300 px-3 py-1.5 text-sm font-semibold text-slate-600 hover:bg-slate-100"
-    >
-      <svg
-        aria-hidden="true"
-        class="size-4 shrink-0"
-        xmlns="http://www.w3.org/2000/svg"
-        viewBox="0 0 20 20"
-        fill="currentColor"
+  <header class="flex items-center gap-6 border-b border-slate-300 bg-white px-6">
+    <h1 class="text-base font-bold">DatalogVisual</h1>
+
+    <nav class="flex">
+      <a
+        routerLink="/"
+        routerLinkActive
+        #home="routerLinkActive"
+        [routerLinkActiveOptions]="{ exact: true }"
+        [class]="home.isActive ? enlaceActivo : enlaceInactivo"
       >
-        <path
-          fill-rule="evenodd"
-          d="M15.312 11.424a5.5 5.5 0 0 1-9.201 2.466l-.312-.311h2.433a.75.75 0 0 0 0-1.5H3.989a.75.75 0 0 0-.75.75v4.242a.75.75 0 0 0 1.5 0v-2.43l.31.31a7 7 0 0 0 11.712-3.138.75.75 0 0 0-1.449-.39Zm1.23-3.723a.75.75 0 0 0 .219-.53V2.929a.75.75 0 0 0-1.5 0V5.36l-.31-.31A7 7 0 0 0 3.239 8.188a.75.75 0 1 0 1.448.389A5.5 5.5 0 0 1 13.89 6.11l.311.31h-2.432a.75.75 0 0 0 0 1.5h4.243a.75.75 0 0 0 .53-.219Z"
-          clip-rule="evenodd"
-        />
-      </svg>
-      Reiniciar
-    </button>
+        Inicio
+      </a>
+      <a
+        routerLink="/pydatalog"
+        routerLinkActive
+        #editor="routerLinkActive"
+        [class]="editor.isActive ? enlaceActivo : enlaceInactivo"
+        >Editor</a
+      >
+      <a
+        routerLink="/biblioteca"
+        routerLinkActive
+        #biblioteca="routerLinkActive"
+        [class]="biblioteca.isActive ? enlaceActivo : enlaceInactivo"
+        >Biblioteca</a
+      >
+    </nav>
   </header>
 
-  <main class="flex min-h-0 flex-1">
-    <section class="flex min-w-0 basis-2/3 flex-col">
-      <nav class="flex border-b border-slate-300 bg-white">
-        <button
-          type="button"
-          (click)="pestana.set('hecho')"
-          class="inline-flex flex-1 items-center justify-center gap-2 border-b-2 px-4 py-3 text-sm font-semibold tracking-wide uppercase"
-          [class]="
-            pestana() === 'hecho'
-              ? 'border-indigo-600 text-indigo-700'
-              : 'border-transparent text-slate-500 hover:text-slate-700'
-          "
-        >
-          <svg
-            aria-hidden="true"
-            class="size-4 shrink-0"
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 20 20"
-            fill="currentColor"
-          >
-            <path
-              d="M10.362 1.093a.75.75 0 0 0-.724 0L2.523 5.018 10 9.143l7.477-4.125-7.115-3.925ZM18 6.443l-7.25 4v8.25l6.862-3.786A.75.75 0 0 0 18 14.25V6.443Zm-8.75 12.25v-8.25l-7.25-4v7.807a.75.75 0 0 0 .388.657l6.862 3.786Z"
-            />
-          </svg>
-          Añadir hecho
-        </button>
-        <button
-          type="button"
-          (click)="pestana.set('regla')"
-          class="inline-flex flex-1 items-center justify-center gap-2 border-b-2 px-4 py-3 text-sm font-semibold tracking-wide uppercase"
-          [class]="
-            pestana() === 'regla'
-              ? 'border-indigo-600 text-indigo-700'
-              : 'border-transparent text-slate-500 hover:text-slate-700'
-          "
-        >
-          <svg
-            aria-hidden="true"
-            class="size-4 shrink-0"
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 20 20"
-            fill="currentColor"
-          >
-            <path
-              d="M13 4.5a2.5 2.5 0 1 1 .702 1.737L6.97 9.604a2.518 2.518 0 0 1 0 .792l6.733 3.367a2.5 2.5 0 1 1-.671 1.341l-6.733-3.367a2.5 2.5 0 1 1 0-3.475l6.733-3.366A2.52 2.52 0 0 1 13 4.5Z"
-            />
-          </svg>
-          Añadir regla
-        </button>
-      </nav>
-
-      <section class="min-h-0 flex-1 overflow-y-auto p-6">
-        <div [class.hidden]="pestana() !== 'hecho'">
-          <app-formulario-hecho />
-        </div>
-        <div [class.hidden]="pestana() !== 'regla'">
-          <app-formulario-regla />
-        </div>
-      </section>
-
-      <app-panel-consulta />
-    </section>
-
-    <aside class="min-w-0 basis-1/3 overflow-y-auto border-l border-slate-300 bg-white p-6">
-      <app-base-conocimiento />
-    </aside>
-  </main>
+  <router-outlet />
 </div>

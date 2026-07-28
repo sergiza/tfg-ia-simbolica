@@ -1,5 +1,5 @@
 import { Component, computed, inject, input, output, signal } from '@angular/core';
-import { Combobox, GrupoCombo, OpcionCombo } from '../combobox/combobox';
+import { Combobox, GrupoCombo, OpcionCombo } from '../../comun/combobox/combobox';
 import { ConocimientoService } from '../conocimiento-service';
 import {
   OPCION_CONSTANTE,
@@ -7,7 +7,7 @@ import {
   SELECT_CONSTANTE,
   SELECT_NEUTRO,
   SELECT_VARIABLE,
-} from '../estilos';
+} from '../../comun/estilos';
 import { esConstanteValida, esNombreValido, esNumero, esVariable } from '../modelos';
 
 @Component({
