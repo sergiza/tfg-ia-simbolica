@@ -79,3 +79,11 @@ def reiniciar() -> None:
     pyDatalog.clear()
     _hechos.clear()
     _reglas.clear()
+
+
+def cargar(estado: dict) -> None:
+    reiniciar()
+    for hecho in estado.get("hechos", []):
+        add_hecho(hecho["predicado"], hecho["terminos"])
+    for regla in estado.get("reglas", []):
+        add_regla(regla["cabeza"], regla["cuerpo"])

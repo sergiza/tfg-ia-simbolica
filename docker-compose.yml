@@ -3,6 +3,8 @@ services:
     build: ./back
     ports:
       - "5000:5000"
+    volumes:
+      - biblioteca:/app/datos
 
   frontend:
     build: ./front
@@ -10,3 +12,6 @@ services:
       - "4200:80"
     depends_on:
       - backend
+
+volumes:
+  biblioteca:

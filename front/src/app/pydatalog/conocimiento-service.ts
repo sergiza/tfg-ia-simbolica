@@ -105,8 +105,12 @@ export class ConocimientoService {
 
   async reiniciar(): Promise<void> {
     await firstValueFrom(this.http.post(`${API}/reiniciar`, {}));
-    this.hechos.set([]);
-    this.reglas.set([]);
+    this.reemplazar({ hechos: [], reglas: [] });
+  }
+
+  reemplazar(estado: Estado): void {
+    this.hechos.set(estado.hechos);
+    this.reglas.set(estado.reglas);
     this.declarados.set([]);
     this.constantesExtra.set([]);
   }

@@ -1,0 +1,24 @@
+{
+  "nombre": "Familia",
+  "orden": 1,
+  "estado": {
+    "hechos": [
+      { "predicado": "padre", "terminos": ["abe", "homer"] },
+      { "predicado": "padre", "terminos": ["homer", "lisa"] },
+      { "predicado": "padre", "terminos": ["homer", "bart"] },
+      { "predicado": "padre", "terminos": ["homer", "maggie"] },
+      { "predicado": "padre", "terminos": ["marge", "lisa"] },
+      { "predicado": "padre", "terminos": ["marge", "bart"] },
+      { "predicado": "padre", "terminos": ["marge", "maggie"] }
+    ],
+    "reglas": [
+      {
+        "cabeza": { "predicado": "abuelo", "variables": ["X", "Y"] },
+        "cuerpo": [
+          { "tipo": "literal", "predicado": "padre", "argumentos": ["X", "Z"], "negado": false },
+          { "tipo": "literal", "predicado": "padre", "argumentos": ["Z", "Y"], "negado": false }
+        ]
+      }
+    ]
+  }
+}

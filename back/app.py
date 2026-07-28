@@ -1,10 +1,12 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from pyDatalog import Logic
+import biblioteca
 import knowledge_base as kb
 
 app = Flask(__name__)
 CORS(app)
+biblioteca.iniciar()
 
 
 @app.before_request
@@ -56,6 +58,49 @@ def post_consultar():
 def post_reiniciar():
     kb.reiniciar()
     return '', 204
+
+
+@app.route('/biblioteca', methods=['GET'])
+def get_biblioteca():
+    return jsonify({
+        'ejemplos': biblioteca.ejemplos(),
+        'guardados': biblioteca.guardados(),
+    })
+
+
+@app.route('/biblioteca/guardados', methods=['POST'])
+def post_guardado():
+    data = request.get_json()
+    nombre = (data.get('nombre') or '').strip()
+    if not nombre:
+        return jsonify({'error': 'El nombre es obligatorio'}), 400
+    guardado = biblioteca.guardar(nombre, data.get('descripcion', ''), kb.get_estado())
+    return jsonify(guardado), 201
+
+
+@app.route('/biblioteca/guardados/<int:id>', methods=['DELETE'])
+def delete_guardado(id):
+    if not biblioteca.borrar(id):
+        return jsonify({'error': 'Guardado no encontrado'}), 404
+    return '', 204
+
+
+@app.route('/biblioteca/ejemplos/<id>/cargar', methods=['POST'])
+def post_cargar_ejemplo(id):
+    estado = biblioteca.estado_ejemplo(id)
+    if estado is None:
+        return jsonify({'error': 'Ejemplo no encontrado'}), 404
+    kb.cargar(estado)
+    return jsonify(kb.get_estado())
+
+
+@app.route('/biblioteca/guardados/<int:id>/cargar', methods=['POST'])
+def post_cargar_guardado(id):
+    estado = biblioteca.estado_guardado(id)
+    if estado is None:
+        return jsonify({'error': 'Guardado no encontrado'}), 404
+    kb.cargar(estado)
+    return jsonify(kb.get_estado())
 
 
 if __name__ == '__main__':

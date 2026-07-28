@@ -1,0 +1,28 @@
+{
+  "nombre": "Edades",
+  "orden": 2,
+  "estado": {
+    "hechos": [
+      { "predicado": "edad", "terminos": ["juan", "20"] },
+      { "predicado": "edad", "terminos": ["ana", "15"] },
+      { "predicado": "edad", "terminos": ["luis", "30"] },
+      { "predicado": "edad", "terminos": ["sara", "17"] }
+    ],
+    "reglas": [
+      {
+        "cabeza": { "predicado": "mayor_de_edad", "variables": ["X"] },
+        "cuerpo": [
+          { "tipo": "literal", "predicado": "edad", "argumentos": ["X", "Y"], "negado": false },
+          {
+            "tipo": "comparacion",
+            "izquierda": "Y",
+            "operador": ">=",
+            "derecha": "18",
+            "operacion": "",
+            "derecha2": ""
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -1,4 +1,116 @@
 <div class="mx-auto max-w-3xl p-8">
-  <h2 class="mb-2 text-2xl font-bold">Biblioteca</h2>
-  <p class="text-slate-600">TO DO</p>
+  <h2 class="mb-6 text-2xl font-bold">Biblioteca</h2>
+
+  @if (error()) {
+    <p class="mb-6 rounded border border-red-200 bg-red-50 p-3 text-sm text-red-700">
+      {{ error() }}
+    </p>
+  }
+
+  <h3 class="mb-2 text-xs font-semibold tracking-wide text-slate-500 uppercase">Ejemplos</h3>
+  <ul class="mb-8 space-y-2">
+    @for (entrada of biblioteca.ejemplos(); track entrada.id) {
+      <li class="overflow-hidden rounded border border-slate-300 bg-white">
+        <div class="flex items-center gap-3 pr-4 transition-colors hover:bg-slate-100">
+          <button
+            type="button"
+            (click)="alternar(entrada)"
+            [attr.aria-expanded]="abierta() === clave(entrada)"
+            class="flex flex-1 items-center gap-2 p-4 text-left font-semibold"
+          >
+            <svg
+              aria-hidden="true"
+              class="size-4 shrink-0 text-slate-400 transition-transform"
+              [class.rotate-90]="abierta() === clave(entrada)"
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 20 20"
+              fill="currentColor"
+            >
+              <path
+                fill-rule="evenodd"
+                d="M8.22 5.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 0 1-1.06-1.06L11.94 10 8.22 6.28a.75.75 0 0 1 0-1.06Z"
+                clip-rule="evenodd"
+              />
+            </svg>
+            {{ entrada.nombre }}
+          </button>
+          <button
+            type="button"
+            (click)="cargar(entrada, true)"
+            class="rounded bg-indigo-600 px-3 py-1.5 text-sm font-semibold text-white hover:bg-indigo-500"
+          >
+            Cargar
+          </button>
+        </div>
+        @if (abierta() === clave(entrada)) {
+          <div
+            class="border-t border-slate-200 px-4 py-3 text-slate-700"
+            [innerHTML]="descripcion()"
+          ></div>
+        }
+      </li>
+    }
+  </ul>
+
+  <h3 class="mb-2 text-xs font-semibold tracking-wide text-slate-500 uppercase">Guardadas</h3>
+  @if (biblioteca.guardados().length === 0) {
+    <p class="text-sm text-slate-400 italic">Todavía no has guardado ninguna.</p>
+  } @else {
+    <ul class="space-y-2">
+      @for (entrada of biblioteca.guardados(); track entrada.id) {
+        <li class="overflow-hidden rounded border border-slate-300 bg-white">
+          <div class="flex items-center gap-3 pr-4 transition-colors hover:bg-slate-100">
+            <button
+              type="button"
+              (click)="alternar(entrada)"
+              [attr.aria-expanded]="abierta() === clave(entrada)"
+              class="flex flex-1 items-center gap-2 p-4 text-left"
+            >
+              <svg
+                aria-hidden="true"
+                class="size-4 shrink-0 text-slate-400 transition-transform"
+                [class.rotate-90]="abierta() === clave(entrada)"
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+              >
+                <path
+                  fill-rule="evenodd"
+                  d="M8.22 5.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 0 1-1.06-1.06L11.94 10 8.22 6.28a.75.75 0 0 1 0-1.06Z"
+                  clip-rule="evenodd"
+                />
+              </svg>
+              <span>
+                <span class="block font-semibold">{{ entrada.nombre }}</span>
+                <span class="block text-sm text-slate-500">{{
+                  entrada.fecha | date: 'd MMM y, HH:mm'
+                }}</span>
+              </span>
+            </button>
+            <button
+              type="button"
+              (click)="cargar(entrada, false)"
+              class="rounded bg-indigo-600 px-3 py-1.5 text-sm font-semibold text-white hover:bg-indigo-500"
+            >
+              Cargar
+            </button>
+            <button
+              type="button"
+              (click)="borrar(entrada)"
+              [attr.aria-label]="'Borrar ' + entrada.nombre"
+              class="rounded border border-red-300 px-3 py-1.5 text-sm font-semibold text-red-700 hover:bg-red-50"
+            >
+              Borrar
+            </button>
+          </div>
+          @if (abierta() === clave(entrada)) {
+            <div
+              class="border-t border-slate-200 px-4 py-3 text-slate-700"
+              [innerHTML]="descripcion()"
+            ></div>
+          }
+        </li>
+      }
+    </ul>
+  }
 </div>
