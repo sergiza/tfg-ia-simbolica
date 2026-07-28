@@ -88,6 +88,18 @@ export class Combobox {
     return { grupos, crear, total: indice };
   });
 
+  protected readonly textoValor = computed(() => {
+    const valor = this.valor();
+    for (const grupo of this.grupos()) {
+      for (const opcion of grupo.opciones) {
+        if (opcion.valor === valor) {
+          return opcion.etiqueta;
+        }
+      }
+    }
+    return valor;
+  });
+
   protected readonly etiquetaCrear = computed(() => {
     const texto = this.consulta().trim();
     return texto === '' ? `+ ${this.textoCrear()}…` : `+ crear «${texto}»`;

@@ -44,23 +44,17 @@
     <div class="grid gap-6 border-t border-slate-700 bg-white p-6 md:grid-cols-2">
       <div class="space-y-4">
         <div>
-          <label
-            for="consulta-predicado"
-            class="mb-1 block text-xs font-semibold tracking-wide text-slate-500 uppercase"
-          >
-            Predicado
-          </label>
-          <select
-            id="consulta-predicado"
-            [value]="predicado()"
-            (change)="elegirPredicado($event)"
-            [class]="'w-full ' + estiloPredicado"
-          >
-            <option value="" disabled>Elige un predicado</option>
-            @for (p of kb.predicados(); track p) {
-              <option [value]="p">{{ p }}</option>
-            }
-          </select>
+          <p class="mb-1 text-xs font-semibold tracking-wide text-slate-500 uppercase">Predicado</p>
+          <app-combobox
+            class="block"
+            [valor]="predicado()"
+            [grupos]="gruposPredicado()"
+            [estilo]="estiloPredicado"
+            etiqueta="Predicado"
+            marcador="predicado…"
+            ancho="w-full"
+            (cambio)="elegirPredicado($event)"
+          />
         </div>
 
         @if (argumentos().length > 0) {
@@ -70,17 +64,16 @@
             </legend>
             <div class="space-y-2">
               @for (a of argumentos(); track $index) {
-                <select
-                  [value]="a"
-                  (change)="elegirArgumento($index, $event)"
-                  [attr.aria-label]="'Argumento ' + ($index + 1)"
-                  [class]="'w-full ' + estiloArgumento(a)"
-                >
-                  <option value="">Libre (cualquier valor)</option>
-                  @for (t of kb.terminos(); track t) {
-                    <option [value]="t">{{ t }}</option>
-                  }
-                </select>
+                <app-combobox
+                  class="block"
+                  [valor]="a"
+                  [grupos]="gruposArgumento()"
+                  [estilo]="estiloArgumento(a)"
+                  [etiqueta]="'Argumento ' + ($index + 1)"
+                  marcador="valor…"
+                  ancho="w-full"
+                  (cambio)="elegirArgumento($index, $event)"
+                />
               }
             </div>
           </fieldset>

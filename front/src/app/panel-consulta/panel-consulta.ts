@@ -1,11 +1,20 @@
 import { Component, computed, inject, signal } from '@angular/core';
+import { Combobox, GrupoCombo } from '../combobox/combobox';
 import { ConocimientoService } from '../conocimiento-service';
-import { SELECT_CONSTANTE, SELECT_PREDICADO, SELECT_VARIABLE } from '../estilos';
+import {
+  OPCION_CONSTANTE,
+  OPCION_PREDICADO,
+  OPCION_VARIABLE,
+  SELECT_CONSTANTE,
+  SELECT_PREDICADO,
+  SELECT_VARIABLE,
+} from '../estilos';
 import { LETRAS_VARIABLES } from '../modelos';
 
 @Component({
   selector: 'app-panel-consulta',
   templateUrl: './panel-consulta.html',
+  imports: [Combobox],
 })
 export class PanelConsulta {
   protected readonly kb = inject(ConocimientoService);
@@ -22,6 +31,28 @@ export class PanelConsulta {
 
   protected readonly estiloPredicado = SELECT_PREDICADO;
 
+  protected readonly gruposPredicado = computed<GrupoCombo[]>(() => [
+    {
+      titulo: null,
+      opciones: this.kb.predicados().map((p) => ({
+        valor: p,
+        etiqueta: p,
+        nota: `${this.kb.aridad(p)} términos`,
+        clase: OPCION_PREDICADO,
+      })),
+    },
+  ]);
+
+  protected readonly gruposArgumento = computed<GrupoCombo[]>(() => [
+    {
+      titulo: null,
+      opciones: [
+        { valor: '', etiqueta: 'libre', nota: 'cualquier valor', clase: OPCION_VARIABLE },
+        ...this.kb.terminos().map((t) => ({ valor: t, etiqueta: t, clase: OPCION_CONSTANTE })),
+      ],
+    },
+  ]);
+
   protected estiloArgumento(valor: string): string {
     return valor === '' ? SELECT_VARIABLE : SELECT_CONSTANTE;
   }
@@ -30,16 +61,14 @@ export class PanelConsulta {
     this.abierta.update((abierta) => !abierta);
   }
 
-  protected elegirPredicado(evento: Event): void {
-    const nombre = (evento.target as HTMLSelectElement).value;
+  protected elegirPredicado(nombre: string): void {
     this.predicado.set(nombre);
     this.argumentos.set(Array(this.kb.aridad(nombre)).fill(''));
     this.resultados.set(null);
     this.error.set(null);
   }
 
-  protected elegirArgumento(indice: number, evento: Event): void {
-    const valor = (evento.target as HTMLSelectElement).value;
+  protected elegirArgumento(indice: number, valor: string): void {
     this.argumentos.update((argumentos) => argumentos.with(indice, valor));
     this.resultados.set(null);
   }
